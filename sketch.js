@@ -11,19 +11,20 @@ const blobDog = {
       vertical: 0.1//1 is up, and -1 is down
     }
   },
-  pos: { x: 100, y: 100 },
+  pos: { x: 250, y: 250 },
   rot: 0,
   squeeze: 1,
   squeezeRot: 0,
   body: {
-    d: 150,
+    d: 200,
     mainClr: 'beige',
     patternClr: 'lightSalmon'
   },
+  defaultDiameter: 100,
   bodyDraw() {
     push();
     noStroke();
-    const d = this.body.d;
+    const d = this.defaultDiameter;
     fill(this.body.mainClr);
     drawingContext.save();
     circle(0, 0, d);
@@ -35,7 +36,7 @@ const blobDog = {
     pop();
   },
   drawFace() {
-    const d = this.body.d;
+    const d = this.defaultDiameter;
     //eyes
     const eyeLevel = d / 12;
     const eyeDistance = d / 5;
@@ -64,7 +65,7 @@ const blobDog = {
     rim: 0.05
   },
   drawEars() {
-    const d = this.body.d;
+    const d = this.defaultDiameter;
     push();
     fill(this.ears.innerClr);
     strokeWeight(d * this.ears.rim);
@@ -98,7 +99,7 @@ const blobDog = {
     strokeWeight(1);
     stroke(100, 100);
     noFill();
-    const d = this.body.d;
+    const d = this.defaultDiameter;
     const v = d * this.pose.heading.vertical;
     const h = d* this.pose.heading.horizontal;
     ellipse(0, 0, d, v);
@@ -119,23 +120,44 @@ const blobDog = {
   draw() {
     push();
     translate(this.pos.x, this.pos.y);
+    const scaleFactor = this.body.d/100;
+    scale(scaleFactor);
     rotate(this.squeezeRot);
     scale(1 / this.squeeze, this.squeeze * this.squeeze);
     rotate(-this.squeezeRot);
     rotate(this.rot);
 
-    //this.drawEars();
+    this.drawEars();
     this.bodyDraw();
-    //this.drawFace();//currently stares into the viewer's soul
+    //this.drawFace();//currently stares into the my soul
     this.drawDirectionalMock();
     pop();
   }
 };
+const dumbbell = {
+  center:{
+    x:canvasSize.width/2,
+    y:canvasSize.height/3
+  },
+  length : canvasSize.width/2,
+  draw(){
+    const x = this.center.x;
+    const y = this.center.y;
+    const half = this.length/2;
+
+    line(x-half,y,x+half,y);
+  }
+}
+
+const anchorPoint = {
+  x: canvasSize.width/2,
+  y: canvasSize.height * 2/3,
+}
 
 const blobBin = {
   scaleFactor: 1,
   thickness: 30,
-  pos: { x: canvasSize.width / 2, y: canvasSize.height / 2 },
+  pos: { x: canvasSize.width *0.8, y: canvasSize.height / 5 },
   draw() {
     push();
     translate(this.pos.x, this.pos.y);
@@ -177,6 +199,15 @@ lp.forces = [
       pre.horizontal = lerp(pre.horizontal, x, jump);
       pre.vertical = lerp(pre.vertical, y, jump);
     }
+  },
+  {
+    name:'dumbbellHolder',
+    start:0,
+    end:Infinity,
+    effect(){
+      const topOfDogHead = blobDog.pos.y - (blobDog.body.d/2) * blobDog.squeeze;
+      dumbbell.y = topOfDogHead;
+    }
   }
 ];
 
@@ -186,15 +217,16 @@ function setup() {
   frameRate(12);
   lp.setDuration(5);
   frameworksRegistrationAfterSetup();
-  background('midnightBlue');
+  backgroundColor = color("midnightBlue")
 }
-
+let backgroundColor;
 lp.repeatSetup = function () {
   blobBin.thickness = 50;
 }
 
 function draw() {
-  
+  background(backgroundColor);
   blobBin.draw();
   blobDog.draw();
+  dumbbell.draw();
 }

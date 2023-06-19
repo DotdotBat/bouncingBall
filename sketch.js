@@ -135,14 +135,12 @@ const blobDog = {
   }
 };
 const dumbbell = {
-  center:{
-    x:canvasSize.width/2,
-    y:canvasSize.height/3
-  },
+  x:canvasSize.width/2,
+  y:canvasSize.height/3,
   length : canvasSize.width/2,
   draw(){
-    const x = this.center.x;
-    const y = this.center.y;
+    const x = this.x;
+    const y = this.y;
     const half = this.length/2;
 
     line(x-half,y,x+half,y);

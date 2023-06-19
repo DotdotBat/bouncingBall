@@ -11,8 +11,11 @@ const loopFrameWork = {
     this.updateSecondsAndStart();
     if (this.isStart()) {
       this.forces.forEach(force => { force.virgin = true; });
-      this.repeatSetup();
     }
+    this.forces.forEach(force => {
+      if (this.forceIsApplicable(force))
+        force.effect();
+    });
   },
   isStart() {
     return this.seconds < this.step;
@@ -34,22 +37,7 @@ const loopFrameWork = {
       this._currentLoopStart += this._DURATION;
     }
   },
-  repeatSetup() {
-    //subject to override
-  },
 
-  /**best put at the end of the p5 setup*/
-  p5Setup() {
-    this.repeatSetup();
-  },
-  /**put this at the start of p5 draw */
-  p5Draw() {
-    this.update();
-    this.forces.forEach(force => {
-      if (this.forceIsApplicable(force))
-        force.effect();
-    });
-  },
   forces: [
     {
       name: 'default force',
@@ -76,11 +64,10 @@ const loopFrameWork = {
 };
 
 
-function frameworksRegistrationAfterSetup() {
-  loopFrameWork.p5Setup();
+function addLoopUpdateToP5DrawFunction() {
   const p5Draw = draw;
   draw = function () {
-    loopFrameWork.p5Draw();
+    loopFrameWork.update();
     p5Draw();
   };
 }

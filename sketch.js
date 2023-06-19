@@ -168,6 +168,14 @@ const blobBin = {
 const lp = loopFrameWork;
 lp.forces = [
   {
+    name:"restart",
+    start: 0,
+    end: -Infinity,
+    effect(){
+      blobBin.thickness = 50;
+    }
+  },
+  {
     name: 'the thickening',
     start: 2,
     end: 4,
@@ -214,13 +222,11 @@ function setup() {
   createCanvas(cs.width, cs.height);
   frameRate(12);
   lp.setDuration(5);
-  frameworksRegistrationAfterSetup();
+  addLoopUpdateToP5DrawFunction();
   backgroundColor = color("midnightBlue")
 }
 let backgroundColor;
-lp.repeatSetup = function () {
-  blobBin.thickness = 50;
-}
+
 
 function draw() {
   background(backgroundColor);

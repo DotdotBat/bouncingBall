@@ -5,8 +5,6 @@ const anchorPoint = {
   y: canvasSize.height * 2/3,
 }
 
-
-
 const lp = loopFrameWork;
 
 function setup() {
@@ -18,7 +16,6 @@ function setup() {
   backgroundColor = color("midnightBlue")
 }
 let backgroundColor;
-
 
 function draw() {
   background(backgroundColor);

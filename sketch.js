@@ -18,6 +18,7 @@ function setup() {
 let backgroundColor;
 
 function draw() {
+
   background(backgroundColor);
   blobBin.draw();
   blobDog.draw();

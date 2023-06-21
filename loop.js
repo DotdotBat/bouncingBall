@@ -7,7 +7,7 @@ const loopFrameWork = {
     this._DURATION = sec;
   },
   update() {
-    this.updateStep;
+    this.updateStep();
     this.updateSecondsAndStart();
     if (this.isStart()) {
       this.forces.forEach(force => { force.virgin = true; });
@@ -24,7 +24,7 @@ const loopFrameWork = {
     this._currentLoopStart = millis() / 1000;
   },
   updateStep() {
-    this.step = deltaTime / 1000;
+    this.step = deltaTime / 1024;
   },
   /**
  * Updates the global variables loopSeconds and loopStep
@@ -51,9 +51,10 @@ const loopFrameWork = {
   forceIsApplicable(force) {//currently supports only forces with start and end values
     if (force.start == undefined && force.end == undefined)
       console.error('unhandled force type');
-
+    
     //force type - range (has a start and a end value)
     const now = this.seconds;
+    
     if (now < force.start) return false;
     if (force.virgin) {
       force.virgin = false;

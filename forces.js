@@ -28,12 +28,12 @@ lp.forces = [
     name: 'head follow',
     start: 0,
     end: 10,
-    estimatedDelay: 5,
+    estimatedDelay: 1,
     effect() {
       const pre = blobDog.pose.heading;
       const x = 2 * mouseX / width - 1;
       const y = -(2 * mouseY / height - 1);
-      const jump = 0.5 * (lp.step / this.estimatedDelay);
+      const jump =  (lp.step / this.estimatedDelay);
       pre.horizontal = lerp(pre.horizontal, x, jump);
       pre.vertical = lerp(pre.vertical, y, jump);
     }

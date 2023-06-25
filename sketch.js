@@ -11,7 +11,7 @@ function setup() {
   const cs = canvasSize;
   createCanvas(cs.width, cs.height);
   frameRate(12);
-  lp.setDuration(5);
+  lp.setDuration(60);
   addLoopUpdateToP5DrawFunction();
   backgroundColor = color("midnightBlue")
 }
@@ -22,5 +22,5 @@ function draw() {
   background(backgroundColor);
   blobBin.draw();
   blobDog.draw();
-  dumbbell.draw();
+  barbell.draw();
 }

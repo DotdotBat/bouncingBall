@@ -23,4 +23,5 @@ function draw() {
   blobBin.draw();
   blobDog.draw();
   barbell.draw();
+  blobDog.drawPaws();//they are on the barbell, so they have to be drawn on top
 }

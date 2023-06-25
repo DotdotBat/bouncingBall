@@ -67,6 +67,17 @@ lp.forces = [
       //barbell.endsY = lerp(barbell.endsY, barbell.holdsY, jump);
       const barbellEndsPath = cos(angle - Math.PI/6 -Math.PI/6) * this.barbellAmplitude * width/2;
       barbell.endsY = barbell.holdsY + barbellEndsPath;
+
+      //ears take hold of the bar
+      const rightHoldX = barbell.getRightHoldX();
+      const leftHoldX = barbell.getLeftHoldX();
+      //consider using tiny paws?
+      //yea, good call. 
+      //The ears and the paws are in different coordinates
+      //it would've been a pain in the blob.
+      blobDog.takeHoldLeft(leftHoldX,barbell.holdsY);
+      blobDog.takeHoldRight(rightHoldX,barbell.holdsY);
+      //working on the assumption that the paws look the same.
     }
   },
   

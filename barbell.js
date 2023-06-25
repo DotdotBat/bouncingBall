@@ -7,8 +7,8 @@ const barbell = {
     draw(){
       const leftEndX = this.centerX-this.length/2;
       const rightEndX = this.centerX + this.length/2;
-      const leftHoldX = this.centerX - this.holdSpacing/2;
-      const rightHoldX = this.centerX + this.holdSpacing/2;
+      const leftHoldX = this.getLeftHoldX();
+      const rightHoldX = this.getRightHoldX();
       push();
       //leftWeight
       translate(leftEndX, this.endsY);
@@ -16,7 +16,7 @@ const barbell = {
       const xStep = (this.length-this.holdSpacing)/2;
       const weightsAngle = atan(yStep/xStep);
       rotate(-weightsAngle);
-      ellipse(0,0,20,80);
+      ellipse(0,0,this.holdSpacing/5,this.holdSpacing/2);
 
       pop();
       push();
@@ -35,7 +35,13 @@ const barbell = {
       push();
       translate(rightEndX, this.endsY);
       rotate(weightsAngle);
-      ellipse(0,0,20,80);
+      ellipse(0,0,this.holdSpacing/5,this.holdSpacing/2);
       pop();
     },
+    getRightHoldX(){
+      return this.centerX + this.holdSpacing/2;
+    },
+    getLeftHoldX(){
+      return  this.centerX - this.holdSpacing/2;
+    }
   }

@@ -130,5 +130,34 @@ const blobDog = {
       //this.drawFace();//currently stares into the my soul
       this.drawDirectionalMock();
       pop();
+    },
+    takeHoldRight(x, y){
+      this.paws.right.x = x;
+      this.paws.right.y = y;
+    },
+    takeHoldLeft(x, y){
+      this.paws.left.x = x;
+      this.paws.left.y = y;
+    },
+    paws: {
+      thickness:30,
+      right:{x:0,y:0},
+      left:{x:0, y:0}
+    },
+    drawPaws(){
+      push();
+      fill(this.body.mainClr)
+      circle(this.paws.left.x, this.paws.left.y, this.paws.thickness);
+      line(this.paws.left.x-this.paws.thickness/6,this.paws.left.y, 
+      this.paws.left.x-this.paws.thickness/6, this.paws.left.y + this.paws.thickness/2);
+      line(this.paws.left.x+this.paws.thickness/6,this.paws.left.y, 
+      this.paws.left.x+this.paws.thickness/6, this.paws.left.y + this.paws.thickness/2);
+      fill(this.body.patternClr);
+      circle(this.paws.right.x, this.paws.right.y, this.paws.thickness);
+      line(this.paws.right.x-this.paws.thickness/6,this.paws.right.y, 
+      this.paws.right.x-this.paws.thickness/6, this.paws.right.y + this.paws.thickness/2);
+      line(this.paws.right.x+this.paws.thickness/6,this.paws.right.y, 
+      this.paws.right.x+this.paws.thickness/6, this.paws.right.y + this.paws.thickness/2);
+      pop();
     }
   };

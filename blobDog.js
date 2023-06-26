@@ -140,6 +140,7 @@ const blobDog = {
       this.paws.left.y = y;
     },
     paws: {
+      visible:true,
       thickness:30,
       right:{x:0,y:0},
       left:{x:0, y:0}

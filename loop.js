@@ -6,11 +6,13 @@ const loopFrameWork = {
   setDuration(sec) {
     this._DURATION = sec;
   },
+  isInitialized:false,//currently accounts only for forces
   update() {
     this.updateStep();
     this.updateSecondsAndStart();
-    if (this.isStart()) {
+    if (!this.isInitialized || this.isStart()) {
       this.forces.forEach(force => { force.virgin = true; });
+      this.isInitialized=true;
     }
     this.forces.forEach(force => {
       if (this.forceIsApplicable(force))

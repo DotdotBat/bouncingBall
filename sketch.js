@@ -12,16 +12,15 @@ function setup() {
   createCanvas(cs.width, cs.height);
   frameRate(12);
   lp.setDuration(60);
-  addLoopUpdateToP5DrawFunction();
   backgroundColor = color("midnightBlue")
 }
 let backgroundColor;
 
 function draw() {
+  loopFrameWork.update();
+  drawStage();
+}
 
-  background(backgroundColor);
-  blobBin.draw();
-  blobDog.draw();
-  barbell.draw();
-  blobDog.drawPaws();//they are on the barbell, so they have to be drawn on top
+function drawStage(){
+  console.error("didn't override drawStage");
 }

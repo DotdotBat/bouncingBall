@@ -22,5 +22,5 @@ function draw() {
 }
 
 function drawStage(){
-  console.error("didn't override drawStage");
+  //console.error("didn't override drawStage");
 }

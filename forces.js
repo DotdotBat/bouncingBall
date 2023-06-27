@@ -1,10 +1,15 @@
 lp.forces = [
   {
-    name: 'start',
+    name: 'Weightlifting start',
     //virgin:true,
-    start: 0,
-    end: 0,
+    start: 5,
+    end: 5,
     effect() {
+      backgroundColor = color("midnightBlue");
+      blobDog.pos.x = canvasSize.width/2;
+      barbell.centerX = blobDog.pos.x;
+      blobDog.body.d = canvasSize.height/3;
+      barbell.setSize(blobDog.body.d*2);
       drawStage = function () {
         background(backgroundColor);
         blobDog.draw();
@@ -15,7 +20,7 @@ lp.forces = [
   },
   {
     name: 'eye follow',
-    start: 0,
+    start: Infinity,
     end: Infinity,
     effect() {
       blobDog.pose.looking.horizontal = 2 * mouseX / width - 1;
@@ -24,7 +29,7 @@ lp.forces = [
   },
   {
     name: 'head follow',
-    start: 0,
+    start: Infinity,
     end: Infinity,
     estimatedDelay: 1,
     effect() {
@@ -38,8 +43,8 @@ lp.forces = [
   },
   {
     name: 'weightlifting loop',
-    start: 0,
-    end: Infinity,
+    start: 5,
+    end: 10,
     peak: 1,
     low: 0.8,
     period: 60 / 70,
@@ -47,13 +52,14 @@ lp.forces = [
     crouchingOffset: Math.PI,
     barbellSwingOffset: Math.PI / 6,
     barbellEndsFollowupTime: 1,
+    blobDogStandsOnPoint: {x: canvasSize.width/2, y: 2 * canvasSize.height / 3},
     effect() {
       const angle = this.crouchingOffset + (2 * Math.PI * lp.seconds / this.period);
       const progress = (1 - cos(angle)) / 2;
       const crouching = this.low + (this.peak - this.low) * progress;
       blobDog.squeeze = crouching;
       //keep the dog anchored
-      blobDog.pos.y = 2 * canvasSize.height / 3 - (blobDog.body.d / 2) * crouching * crouching;
+      blobDog.pos.y = this.blobDogStandsOnPoint.y - (blobDog.body.d / 2) * crouching * crouching;
 
       const barbellPath = cos(angle - Math.PI / 6) * this.barbellAmplitude * width;
 
@@ -78,6 +84,17 @@ lp.forces = [
       //working on the assumption that the paws look the same.
     }
   },
-
+  {
+    name:"air manuever start",
+    start:0,
+    end:0,
+    effect(){
+      backgroundColor = color("indigo");
+      drawStage = function () {
+        background(backgroundColor);
+        blobDog.draw();
+      }
+    }
+  }
 ];
 

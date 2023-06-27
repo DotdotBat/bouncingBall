@@ -127,8 +127,8 @@ const blobDog = {
   
       this.drawEars();
       this.bodyDraw();
-      //this.drawFace();//currently stares into the my soul
-      this.drawDirectionalMock();
+      this.drawFace();//currently stares into the my soul
+      //this.drawDirectionalMock();
       pop();
     },
     takeHoldRight(x, y){
@@ -147,18 +147,21 @@ const blobDog = {
     },
     drawPaws(){
       push();
-      fill(this.body.mainClr)
+      strokeCap(ROUND);
+      fill(this.body.mainClr);
       circle(this.paws.left.x, this.paws.left.y, this.paws.thickness);
-      line(this.paws.left.x-this.paws.thickness/6,this.paws.left.y, 
-      this.paws.left.x-this.paws.thickness/6, this.paws.left.y + this.paws.thickness/2);
-      line(this.paws.left.x+this.paws.thickness/6,this.paws.left.y, 
-      this.paws.left.x+this.paws.thickness/6, this.paws.left.y + this.paws.thickness/2);
       fill(this.body.patternClr);
       circle(this.paws.right.x, this.paws.right.y, this.paws.thickness);
+      //toes separation
+      strokeWeight(1);
+      line(this.paws.left.x-this.paws.thickness/6,this.paws.left.y, 
+      this.paws.left.x-this.paws.thickness/6, this.paws.left.y + 0.4*this.paws.thickness);
+      line(this.paws.left.x+this.paws.thickness/6,this.paws.left.y, 
+      this.paws.left.x+this.paws.thickness/6, this.paws.left.y + 0.4*this.paws.thickness);
       line(this.paws.right.x-this.paws.thickness/6,this.paws.right.y, 
-      this.paws.right.x-this.paws.thickness/6, this.paws.right.y + this.paws.thickness/2);
+      this.paws.right.x-this.paws.thickness/6, this.paws.right.y + 0.4*this.paws.thickness);
       line(this.paws.right.x+this.paws.thickness/6,this.paws.right.y, 
-      this.paws.right.x+this.paws.thickness/6, this.paws.right.y + this.paws.thickness/2);
+      this.paws.right.x+this.paws.thickness/6, this.paws.right.y + 0.4*this.paws.thickness);
       pop();
     }
   };

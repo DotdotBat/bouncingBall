@@ -2,8 +2,12 @@ const barbell = {
     centerX:250,
     endsY: 100,
     holdsY:100,
-    length : 450,
-    holdSpacing: 150,
+    length : 400,
+    holdSpacing: 160,
+    setSize(l){
+      this.holdSpacing = l*this.holdSpacing/this.length;
+      this.length = l;
+    },
     draw(){
       const leftEndX = this.centerX-this.length/2;
       const rightEndX = this.centerX + this.length/2;

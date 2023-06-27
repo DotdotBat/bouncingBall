@@ -1,4 +1,4 @@
-const canvasSize = { width: 500, height: 500 };
+const canvasSize = { width: 720, height: 720 };
 
 const anchorPoint = {
   x: canvasSize.width/2,
@@ -12,7 +12,7 @@ function setup() {
   createCanvas(cs.width, cs.height);
   frameRate(12);
   lp.setDuration(60);
-  backgroundColor = color("midnightBlue")
+  pixelDensity();
 }
 let backgroundColor;
 

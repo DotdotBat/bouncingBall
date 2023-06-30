@@ -1,8 +1,9 @@
-const canvasSize = { width: 720, height: 720 };
+const canvasSize = { width: 480, height: 480 };
 
-const anchorPoint = {
-  x: canvasSize.width/2,
-  y: canvasSize.height * 2/3,
+const song = {
+  name: 'harder better faster stronger',
+  bpm: 71,
+  length: 57
 }
 
 const lp = loopFrameWork;
@@ -10,10 +11,11 @@ const lp = loopFrameWork;
 function setup() {
   const cs = canvasSize;
   createCanvas(cs.width, cs.height);
-  frameRate(12);
-  lp.setDuration(60);
+  frameRate(30);
   pixelDensity();
+  textSize(height/12);
 }
+
 let backgroundColor;
 
 function draw() {
@@ -22,5 +24,6 @@ function draw() {
 }
 
 function drawStage(){
-  //console.error("didn't override drawStage");
+  //this function is modified by the forces
+  console.error("didn't override drawStage");
 }

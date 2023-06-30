@@ -9,18 +9,16 @@ const loopFrameWork = {
   update() {
     this.updateStep();
     this.updateSecondsAndStart();
-    if ((!this.notFirstCall) || this.isStart()) {
-      this.forces.forEach(force => { force.virgin = true; });
-      this.notFirstCall=true;
+    if ((!this._notFirstCall) || this.isStart) {
+      this.forces.forEach(force => { force._virgin = true; });
+      this._notFirstCall=true;
     }
     this.forces.forEach(force => {
       if (this.forceIsApplicable(force))
-        force.effect();
+        force._effect();
     });
   },
-  isStart() {
-    return this.seconds < this.step;
-  },
+  isStart:true,
   restart() {
     this._currentLoopStart = millis() / 1000;
   },
@@ -33,35 +31,69 @@ const loopFrameWork = {
   updateSecondsAndStart() {
     const currentTime = millis() / 1000;//to seconds
     this.seconds = currentTime - this._currentLoopStart;
+
     if (this.seconds > this._DURATION) {
       this.seconds -= this._DURATION;
       this._currentLoopStart += this._DURATION;
-    }
+      this.isStart = true;
+    }else{this.isStart = false;}
   },
 
-  forces: [
-    {
-      name: 'default force',
-      start: 2,
-      end: 4,
-      effect: () => {
-        console.warn("didn't override lp.forces");
-      }
-    }
-  ],
+  forces: [],
   forceIsApplicable(force) {//currently supports only forces with start and end values
-    if (force.start == undefined && force.end == undefined)
-      console.error('unhandled force type');
-    
+    if (force._start == undefined || force._end == undefined){
+      console.error('unhandled force type', force);
+    }
+     
     //force type - range (has a start and a end value)
     const now = this.seconds;
     
-    if (now < force.start) return false;
-    if (force.virgin) {
-      force.virgin = false;
+    if (now < force._start) return false;
+    if (force._virgin) {
+      force._virgin = false;
       return true;
     }
-    return now <= force.end;
+    return now <= force._end;
+  },
+  Force(){
+    const newForce = {
+      _start: undefined,
+      _end: undefined,
+      _virgin:true,
+      _effect(){print('did not define behavior for a force');},
+      from(s){
+        this._start=s;
+        return this;
+      },
+      after(anotherForce){
+        this._start = anotherForce._end;
+        this._end = this._start;
+        return this;
+      },
+      for(s){
+        this._end = this._start + s;
+        return this;
+      },
+      at(s){
+        this._start = s;
+        this._end = s;
+        return this;
+      },
+      afterPrevious(){
+        //we are working with the assumption that this method is called on a freshly created force
+        const thisForceIndex = loopFrameWork.forces.length-1;
+        const previousForceIndex = thisForceIndex - 1;
+        console.assert(previousForceIndex>=0, 'no previous forces');
+        const previousForce = loopFrameWork.forces[previousForceIndex];
+        return this.after(previousForce);
+      },
+      do(f){
+        this._effect = f;
+        return this;
+      }
+    }
+    loopFrameWork.forces.push(newForce);
+    return newForce;
   }
 };
 

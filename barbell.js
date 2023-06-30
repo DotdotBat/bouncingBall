@@ -24,6 +24,7 @@ const barbell = {
 
       pop();
       push();
+      strokeWeight(width/250);
       noFill();
       beginShape();
       curveVertex(leftEndX, this.endsY);//the ends are repeated

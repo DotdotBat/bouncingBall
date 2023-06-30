@@ -5,6 +5,7 @@ const loopFrameWork = {
   step: 1,
   setDuration(sec) {
     this._DURATION = sec;
+    this._durationWasSetManually = true;
   },
   update() {
     this.updateStep();
@@ -55,6 +56,15 @@ const loopFrameWork = {
     }
     return now <= force._end;
   },
+  recalculateDuration(){
+    let longestDuration = 0;
+    this.forces.forEach(force => {
+      console.assert(force._end!=undefined, "there is a force, with undefined end value", force);
+      longestDuration = force._end>longestDuration?force._end:longestDuration;
+    });
+    this._DURATION = longestDuration;
+    //I am not using the setter method, because it is meant for the user, and will flag that duration was manually set
+  },
   Force(){
     const newForce = {
       _start: undefined,
@@ -89,6 +99,10 @@ const loopFrameWork = {
       },
       do(f){
         this._effect = f;
+        //this method is always called at the end of any force creation, so it's safe to assume if duration has to be changed, we will change it
+        if(!loopFrameWork._durationWasSetManually){
+          loopFrameWork.recalculateDuration();
+        }
         return this;
       }
     }

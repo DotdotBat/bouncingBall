@@ -1,5 +1,3 @@
-lp.setDuration(6);
-
 const highHopSetup = lp.Force().at(0).do(
   () => {
     backgroundColor = color("indigo");

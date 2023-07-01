@@ -65,7 +65,7 @@ const loopFrameWork = {
     this._DURATION = longestDuration;
     //I am not using the setter method, because it is meant for the user, and will flag that duration was manually set
   },
-  Force(){
+  createForce(){
     const newForce = {
       _start: undefined,
       _end: undefined,

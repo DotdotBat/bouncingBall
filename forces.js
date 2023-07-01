@@ -1,4 +1,43 @@
-const highHopSetup = lp.Force().at(0).do(
+
+const bounceSetup = lp.createForce().at(0).do(()=>{
+  backgroundColor = color('maroon');
+  blobDog.reset();
+  drawStage = function () {
+    background(backgroundColor);
+    blobDog.draw();
+  }
+});
+
+const bounce = {
+  keyFrames: [
+    {
+      time: 0,
+      posX: canvasSize.width/2,
+      posY: canvasSize.height/3
+    },
+    {
+      time: 3,
+      posX: canvasSize.width,
+    },
+    {
+      time: 5,
+      posY: canvasSize.height
+    }
+  ]
+}
+
+
+
+const bounceLoop = lp.createForce().after(bounceSetup).for(5).do(
+  ()=>{
+    const now = lp.seconds - bounceLoop._start;
+    blobDog.pos.x = getValueFromKeyFrames(now, 'posX', bounce.keyFrames);
+    blobDog.pos.y = getValueFromKeyFrames(now, 'posY', bounce.keyFrames);
+  }
+);
+
+//hop
+const highHopSetup = lp.createForce().afterPrevious().do(
   () => {
     backgroundColor = color("indigo");
     blobDog.reset();
@@ -20,7 +59,7 @@ const hopSettings = {
 };
 
 
-const highHopLoop = lp.Force().after(highHopSetup).for(3).do(
+const highHopLoop = lp.createForce().after(highHopSetup).for(3).do(
   () => {
     blobDog.savePrePos();//will be used later to calculate speed
 
@@ -43,9 +82,24 @@ const highHopLoop = lp.Force().after(highHopSetup).for(3).do(
       blobDog.squeeze = 1+ 0.1*(abs(progress)-0.3);
     }
 
+    blobDog.rot = -progress*Math.PI/24;
+    const turningPoint = 0.35;
+    const lowEars = Math.PI/3
+    const highEars = -Math.PI/12;
+    if (progress<-turningPoint) {
+      blobDog.ears.angle = lowEars;
+    }else if (progress<turningPoint) {
+      const linearInterpolation = (progress + turningPoint)/(2*turningPoint);
+      blobDog.ears.angle = lerp(lowEars, highEars, linearInterpolation);
+    } else {
+      blobDog.ears.angle = highEars;
+    }
+    
   }
 )
-const weightliftingSetup = lp.Force().afterPrevious().do(() => {
+
+//weightlifting
+const weightliftingSetup = lp.createForce().afterPrevious().do(() => {
   backgroundColor = color("midnightBlue");
   blobDog.reset();
   blobDog.pos.x = canvasSize.width / 2;
@@ -60,7 +114,7 @@ const weightliftingSetup = lp.Force().afterPrevious().do(() => {
   }
 });
 
-const standingPoint = { x: canvasSize.width / 2, y: 2 * canvasSize.height / 3 };
+
 const weightliftingSettings = {
   highPoint: 1,//all length values are in relation to blobDog size
   lowPoint: 0.8,
@@ -72,7 +126,7 @@ const weightliftingSettings = {
   blobDogStandsOnPoint: { x: canvasSize.width / 2, y: 2 * canvasSize.height / 3 },
 }
 
-const weightLiftingLoop = lp.Force().after(weightliftingSetup).for(3).do(
+const weightLiftingLoop = lp.createForce().after(weightliftingSetup).for(3).do(
   () => {
     const wlLoop = weightLiftingLoop;
     const wl = weightliftingSettings;
@@ -81,7 +135,7 @@ const weightLiftingLoop = lp.Force().after(weightliftingSetup).for(3).do(
     const crouching = wl.lowPoint + (wl.highPoint - wl.lowPoint) * progress;
     blobDog.squeeze = crouching;
     //keep the dog anchored
-    blobDog.pos.y = standingPoint.y - (blobDog.body.d / 2) * crouching * crouching;
+    blobDog.pos.y = wl.blobDogStandsOnPoint.y - (blobDog.body.d / 2) * crouching * crouching;
 
     const barbellPath = cos(angle - Math.PI / 6) * wl.barbellAmplitude * width;
 

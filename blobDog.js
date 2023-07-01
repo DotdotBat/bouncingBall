@@ -4,7 +4,8 @@ const blobDog = {
     this.squeezeRot = Math.PI/2;
     this.pos = createVector(width/2, height/2);
     this.speed = createVector(0,0);
-
+    this.rot = 0;
+    this.ears.angle = 0;
   },
   pose: {
     heading: {
@@ -78,7 +79,7 @@ const blobDog = {
   ears: {
     innerClr: 'pink',
     length: 0.2,
-    angle: -3.14 / 6,
+    angle: 0,
     baseWidth: 0.3,
     basePosAngle: 3.14 / 4,
     rim: 0.05
@@ -93,11 +94,11 @@ const blobDog = {
     stroke(this.body.mainClr);
     rotate(-this.ears.basePosAngle);
     translate(d / 2, 0);
-    shearY(this.ears.angle);
+    shearY(this.ears.angle -3.14 / 6);
     triangle(
       -d / 25, -d * this.ears.baseWidth / 2,
       -d / 25, +d * this.ears.baseWidth / 2,
-      d * this.ears.length * cos(this.ears.angle), 0
+      d * this.ears.length * cos(this.ears.angle-3.14 / 6), 0
     );
     //can't I just flip the world around and arrive at the second ear?
     pop();
@@ -105,11 +106,11 @@ const blobDog = {
     stroke(this.body.patternClr);
     rotate(PI + this.ears.basePosAngle);
     translate(d / 2, 0);
-    shearY(-this.ears.angle);
+    shearY(-this.ears.angle+3.14 / 6);
     triangle(
       -d / 25, -d * this.ears.baseWidth / 2,
       -d / 25, +d * this.ears.baseWidth / 2,
-      d * this.ears.length * cos(-this.ears.angle), 0
+      d * this.ears.length * cos(-this.ears.angle+3.14 / 6), 0
     );
     pop();
   },

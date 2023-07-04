@@ -1,5 +1,5 @@
 
-const bounceSetup = lp.createForce().at(0).do(()=>{
+const bounceSetup = lp.createForce().at(0).do(() => {
   backgroundColor = color('maroon');
   blobDog.reset();
   drawStage = function () {
@@ -8,20 +8,60 @@ const bounceSetup = lp.createForce().at(0).do(()=>{
   }
 });
 
+const bouncePad = canvasSize.height / 6;
 const bounce = {
   keyFrames: [
     {
-      time: 0,
-      posX: canvasSize.width/2,
-      posY: canvasSize.height/3
+      name: "start Pos",
+      at: 0,
+      posX: canvasSize.width * 2 / 3,
+      posY: canvasSize.height / 3,
+      bodRot: 0,
     },
     {
-      time: 3,
-      posX: canvasSize.width,
+      name: "kiss the wall",
+      after: 1,
+      posX: canvasSize.width - bouncePad,
+      posY: canvasSize.height * 2 / 3,
+      bodRot: Math.PI / 4
     },
     {
-      time: 5,
-      posY: canvasSize.height
+      name: "squish to the wall",
+      after: 0.5,
+      posX: canvasSize.width - bouncePad / 2,
+      posY: canvasSize.height * 2 / 3,
+    },
+    {
+      name: "unstick from the wall",
+      after: 0.5,
+      posX: canvasSize.width - bouncePad,
+      posY: canvasSize.height * 2 / 3,
+      bodRot: Math.PI / 4,
+    },
+    {
+      name: "touch floor",
+      after: 1,
+      
+      posY: canvasSize.height - bouncePad,
+      bodRot: - Math.PI / 4,
+    },
+    {
+      name: "kiss the floor",
+      after: 0.5,
+      posX: canvasSize.width * 2 / 3,
+      posY: canvasSize.height - bouncePad / 2,
+    },
+    {
+      name: "back to the frey",
+      after: 0.5,
+      posY: canvasSize.height - bouncePad,
+      bodRot: Math.PI / 4
+    },
+    {
+      name: "exit",
+      after: 1,
+      posX: canvasSize.width / 3,
+      posY: canvasSize.height * 2 / 3,
     }
   ]
 }
@@ -29,10 +69,11 @@ const bounce = {
 
 
 const bounceLoop = lp.createForce().after(bounceSetup).for(5).do(
-  ()=>{
+  () => {
     const now = lp.seconds - bounceLoop._start;
     blobDog.pos.x = getValueFromKeyFrames(now, 'posX', bounce.keyFrames);
     blobDog.pos.y = getValueFromKeyFrames(now, 'posY', bounce.keyFrames);
+    blobDog.rot =   -getValueFromKeyFrames(now, "bodRot", bounce.keyFrames);
   }
 );
 
@@ -42,7 +83,7 @@ const highHopSetup = lp.createForce().afterPrevious().do(
     backgroundColor = color("indigo");
     blobDog.reset();
     blobDog.pos = createVector(0.2 * width, 1.1 * height);
-    blobDog.body.d = canvasSize.height/3;
+    blobDog.body.d = canvasSize.height / 3;
     drawStage = function () {
       background(backgroundColor);
       blobDog.draw();
@@ -51,11 +92,11 @@ const highHopSetup = lp.createForce().afterPrevious().do(
 )
 
 const hopSettings = {
-  lowPoint : 1.5 * canvasSize.height,
+  lowPoint: 1.5 * canvasSize.height,
   duration: 3,
-  highPoint : 0.4 * canvasSize.height,
-  startX : canvasSize.width * 0.2,
-  endX : canvasSize.width * 0.8
+  highPoint: 0.4 * canvasSize.height,
+  startX: canvasSize.width * 0.2,
+  endX: canvasSize.width * 0.8
 };
 
 
@@ -64,37 +105,37 @@ const highHopLoop = lp.createForce().after(highHopSetup).for(3).do(
     blobDog.savePrePos();//will be used later to calculate speed
 
     const sT = highHopLoop._start;//start time
-    const progress = 2 * ((lp.seconds-sT) % hopSettings.duration)/hopSettings.duration -1;
+    const progress = 2 * ((lp.seconds - sT) % hopSettings.duration) / hopSettings.duration - 1;
     //so, progress starts at -1, becomes 0 at the middle and ends at 1
-    const parabolaInterpolation = progress*progress;
+    const parabolaInterpolation = progress * progress;
     const s = hopSettings;
-    blobDog.pos.y = s.highPoint + (s.lowPoint - s.highPoint) * parabolaInterpolation; 
+    blobDog.pos.y = s.highPoint + (s.lowPoint - s.highPoint) * parabolaInterpolation;
 
-    blobDog.pos.x = lerp(s.startX, s.endX, 0.5 + progress/2);//0 to 1
+    blobDog.pos.x = lerp(s.startX, s.endX, 0.5 + progress / 2);//0 to 1
     //blobDog
-    blobDog.speed.x = (s.endX - s.startX)/s.duration;
-    blobDog.speed.y = (s.lowPoint - s.highPoint)*progress*2; 
+    blobDog.speed.x = (s.endX - s.startX) / s.duration;
+    blobDog.speed.y = (s.lowPoint - s.highPoint) * progress * 2;
     //derivative of x^2 is x*2
-    
+
     blobDog.squeezeRot = blobDog.speed.heading();
     blobDog.squeeze = 1;
-    if(abs(progress)>0.3){
-      blobDog.squeeze = 1+ 0.1*(abs(progress)-0.3);
+    if (abs(progress) > 0.3) {
+      blobDog.squeeze = 1 + 0.1 * (abs(progress) - 0.3);
     }
 
-    blobDog.rot = -progress*Math.PI/24;
+    blobDog.rot = -progress * Math.PI / 24;
     const turningPoint = 0.35;
-    const lowEars = Math.PI/3
-    const highEars = -Math.PI/12;
-    if (progress<-turningPoint) {
+    const lowEars = Math.PI / 3
+    const highEars = -Math.PI / 12;
+    if (progress < -turningPoint) {
       blobDog.ears.angle = lowEars;
-    }else if (progress<turningPoint) {
-      const linearInterpolation = (progress + turningPoint)/(2*turningPoint);
+    } else if (progress < turningPoint) {
+      const linearInterpolation = (progress + turningPoint) / (2 * turningPoint);
       blobDog.ears.angle = lerp(lowEars, highEars, linearInterpolation);
     } else {
       blobDog.ears.angle = highEars;
     }
-    
+
   }
 )
 

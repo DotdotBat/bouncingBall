@@ -1,15 +1,18 @@
 
-const bounceSetup = lp.createForce().at(0).do(() => {
+const kickSetup = lp.createForce().at(0).do(() => {
   backgroundColor = color('maroon');
   blobDog.reset();
+  textAlign(CENTER, CENTER);
+  textSize(40);
   drawStage = function () {
     background(backgroundColor);
+    text("STRONGER", width/2, height/4);
     blobDog.draw();
+    
   }
 });
 
-const bouncePad = canvasSize.height / 6;
-const bounce = {
+const kick = {
   keyFrames: [
     {
       name: "start Pos",
@@ -17,63 +20,24 @@ const bounce = {
       posX: canvasSize.width * 2 / 3,
       posY: canvasSize.height / 3,
       bodRot: 0,
+      skew: 0
     },
     {
-      name: "kiss the wall",
-      after: 1,
-      posX: canvasSize.width - bouncePad,
-      posY: canvasSize.height * 2 / 3,
-      bodRot: Math.PI / 4
-    },
-    {
-      name: "squish to the wall",
-      after: 0.5,
-      posX: canvasSize.width - bouncePad / 2,
-      posY: canvasSize.height * 2 / 3,
-    },
-    {
-      name: "unstick from the wall",
-      after: 0.5,
-      posX: canvasSize.width - bouncePad,
-      posY: canvasSize.height * 2 / 3,
-      bodRot: Math.PI / 4,
-    },
-    {
-      name: "touch floor",
-      after: 1,
-      
-      posY: canvasSize.height - bouncePad,
-      bodRot: - Math.PI / 4,
-    },
-    {
-      name: "kiss the floor",
-      after: 0.5,
-      posX: canvasSize.width * 2 / 3,
-      posY: canvasSize.height - bouncePad / 2,
-    },
-    {
-      name: "back to the frey",
-      after: 0.5,
-      posY: canvasSize.height - bouncePad,
-      bodRot: Math.PI / 4
-    },
-    {
-      name: "exit",
-      after: 1,
-      posX: canvasSize.width / 3,
-      posY: canvasSize.height * 2 / 3,
+      name: "contact",
+      after: 0.3,
+      skew: Math.PI/4
     }
   ]
 }
 
 
 
-const bounceLoop = lp.createForce().after(bounceSetup).for(5).do(
+const kickLoop = lp.createForce().after(kickSetup).for(5).do(
   () => {
-    const now = lp.seconds - bounceLoop._start;
-    blobDog.pos.x = getValueFromKeyFrames(now, 'posX', bounce.keyFrames);
-    blobDog.pos.y = getValueFromKeyFrames(now, 'posY', bounce.keyFrames);
-    blobDog.rot =   -getValueFromKeyFrames(now, "bodRot", bounce.keyFrames);
+    const now = lp.seconds - kickLoop._start;
+    blobDog.pos.x = getValueFromKeyFrames(now, 'posX', kick.keyFrames);
+    blobDog.pos.y = getValueFromKeyFrames(now, 'posY', kick.keyFrames);
+    blobDog.skew = getValueFromKeyFrames(now, "skew", kick.keyFrames);
   }
 );
 
@@ -86,6 +50,7 @@ const highHopSetup = lp.createForce().afterPrevious().do(
     blobDog.body.d = canvasSize.height / 3;
     drawStage = function () {
       background(backgroundColor);
+      text("BETTER", width/2, height/4);
       blobDog.draw();
     }
   }
@@ -149,6 +114,7 @@ const weightliftingSetup = lp.createForce().afterPrevious().do(() => {
   barbell.setSize(blobDog.body.d * 2);
   drawStage = function () {
     background(backgroundColor);
+    text("HARDER", width/2, height/4);
     blobDog.draw();
     barbell.draw();
     blobDog.drawPaws();//they are on the barbell, so they have to be drawn on after it

@@ -1,5 +1,25 @@
+bounce = {
+  setup(){
+    backgroundColor = 'green';
 
-const kickSetup = lp.createForce().at(0).do(() => {
+    drawStage = bounce.draw;
+  },
+  draw(){
+    background(backgroundColor);
+    text("FASTER", width/2, height/4);
+  },
+  update(){
+
+  }
+}
+
+const bounceSetup = lp.createForce().at(0).do(bounce.setup);
+
+const bounceLoop = lp.createForce().after(bounceSetup).for(1).do(bounce.update);
+
+
+
+const kickSetup = lp.createForce().afterPrevious().do(() => {
   backgroundColor = color('maroon');
   blobDog.reset();
   textAlign(CENTER, CENTER);
@@ -8,36 +28,79 @@ const kickSetup = lp.createForce().at(0).do(() => {
     background(backgroundColor);
     text("STRONGER", width/2, height/4);
     blobDog.draw();
-    
   }
 });
 
 const kick = {
+  //face her
+  //get close
+  //  (but a little lower then her)
+  //smooch (lift your face)
   keyFrames: [
     {
       name: "start Pos",
       at: 0,
-      posX: canvasSize.width * 2 / 3,
-      posY: canvasSize.height / 3,
+      posX: canvasSize.width / 3,
+      posY: canvasSize.height / 2,
       bodRot: 0,
-      skew: 0
+      leftHeading: 0//so not looking left
+    },
+    {
+      name: "face your opponent",
+      after:0.2,
+      leftHeading: 0.2,
+      posX: canvasSize.width/3,
+      skew: 0,
     },
     {
       name: "contact",
       after: 0.3,
-      skew: Math.PI/4
+      posX: 2*canvasSize.width/3,
+      skew: -Math.PI/12,
+      curve(start, end, amt){//todo: implement curves
+        return lerp(start, end, amt);
+      },
+    },
+    {
+      name: "make her wait for it",
+      after:0.2, 
+      posX: 2*canvasSize.width/3,
+      skew: -Math.PI/12,
+      bodRot:0
+    },
+    {
+      name:"peck",
+      after: 0.1,
+      bodRot: -Math.PI/10,
+    },
+    {
+      name: "unPeck",
+      after: 0.1,
+      bodRot: 0,
+      posX: 2*canvasSize.width/3,
+      skew: -Math.PI/12,
+    },
+    {
+      name: "return",
+      after: 0.2,
+      posX: canvasSize.width/3,
+      skew:0,
+      bodRot: 0,
     }
   ]
 }
 
+const kickSceneDuration = 1 + durationFromKeyFrames(kick.keyFrames);
 
-
-const kickLoop = lp.createForce().after(kickSetup).for(5).do(
+const kickLoop = lp.createForce().after(kickSetup).for(kickSceneDuration).do(
   () => {
     const now = lp.seconds - kickLoop._start;
     blobDog.pos.x = getValueFromKeyFrames(now, 'posX', kick.keyFrames);
     blobDog.pos.y = getValueFromKeyFrames(now, 'posY', kick.keyFrames);
-    blobDog.skew = getValueFromKeyFrames(now, "skew", kick.keyFrames);
+    blobDog.skew =  getValueFromKeyFrames(now, "skew", kick.keyFrames);
+    blobDog.pose.heading.horizontal = 
+                    getValueFromKeyFrames(now, "leftHeading", kick.keyFrames);
+    blobDog.rot =   getValueFromKeyFrames(now, "bodRot", kick.keyFrames);
   }
 );
 

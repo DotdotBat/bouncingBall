@@ -2,7 +2,6 @@
  * A function to perform a linear interpolation of a keyName's value at a given time based on an array of keyFrames.
  * 
  * Each keyFrame is an object with a mandatory time property and values. 
- * The keyFrames in the given array must be time sorted
  * @param {number} time - The point in time where we want to compute the interpolated value.
  * @param {string} keyName - The key we wish to calculate an interpolated value for ('posX' or 'posY').
  * @param {object[]} keyFrames - The array of keyFrames whereby each frame is an object with a 'time' property
@@ -27,10 +26,7 @@
  * let interpolatedValue = getValueFromKeyFrames(1.5, 'posX', keyFrames);
  */
 function getValueFromKeyFrames(time, keyName, keyFramesArray) {
-  if(keyFramesArray._wasInitialized===undefined){
-    initializeKeyFramesArray(keyFramesArray);
-    keyFramesArray._wasInitialized = true;
-  }
+  initializeKeyFrameArray(keyFramesArray);
   let previousFrame = null;
   let nextFrame = null;
   for (const frame of keyFramesArray) {
@@ -62,7 +58,11 @@ function getValueFromKeyFrames(time, keyName, keyFramesArray) {
 }
 
 
-function initializeKeyFramesArray(arr){
+function initializeKeyFrameArray(arr){
+  if(arr._wasInitialized){
+    return 0;//no need to initialize an initialized array
+  }
+  arr._wasInitialized = true;
   //calculate the time for each frame and assign it as a "time property"
   let previousFrameTime = 0;
   for(frame of arr){
@@ -72,4 +72,14 @@ function initializeKeyFramesArray(arr){
   }
   //sort the keyframes based on the time
   arr.sort((a,b)=>{a.time-b.time});
+}
+
+function durationFromKeyFrames(keyFramesArray){
+  //the initialization does 2 things:
+  //assign the a time value to each frame
+  //and then sort it from first to last chronologically
+  initializeKeyFrameArray(keyFramesArray);
+  //so we can just grab the time of the last keyframe.
+  const lastKeyframeTime = keyFramesArray[keyFramesArray.length - 1].time;
+  return lastKeyframeTime;
 }

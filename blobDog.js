@@ -7,6 +7,7 @@ const blobDog = {
     this.rot = 0;
     this.ears.angle = 0;
     this.skew = 0;
+    this.pose.heading.horizontal = 0;
   },
   pose: {
     heading: {
@@ -148,10 +149,13 @@ const blobDog = {
     scale(this.squeeze * this.squeeze, 1 / this.squeeze);
     rotate(-this.squeezeRot);
     rotate(this.rot);
+    translate(0, this.body.d/3);
     shearX(this.skew);
+    translate(0, -this.body.d/3);
     this.drawEars();
     this.drawBody();
-    this.drawFace();//currently stares into the my soul
+    translate(this.pose.heading.horizontal*this.body.d/2, 0);
+    this.drawFace();
     //this.drawDirectionalMock();
     pop();
   },

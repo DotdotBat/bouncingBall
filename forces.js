@@ -1,21 +1,126 @@
-bounce = {
-  setup(){
+const bounce = {
+  duration: 3,
+  slowdownOnContact: 2,// > 1
+  restDuration: 0.2,
+  startPoint: { x: 2 * canvasSize.width / 3, y: canvasSize.height / 3 },
+  endPoint: { x: canvasSize.width / 3, y: 2 * canvasSize.height / 3 },
+  wallX: canvasSize.width,
+  floorY: canvasSize.height,
+  RBlobDog: canvasSize.height / 8,
+  blobDogSquishedRCoefficient: 0.7,
+  blobDogSquishedR: undefined,
+  startSpeed: { x: 1, y: 1 },//will be calculated at setup
+  isAirborne: true,
+  setup() {
     backgroundColor = 'green';
-
+    blobDog.reset();
+    blobDog.body.d = 2* this.RBlobDog;
+    blobDog.pos.x = this.startPoint.x;
+    blobDog.pos.y = this.startPoint.y;
+    this.startSpeed = precalculateAirborneSpeedForBounce();
+    blobDog.speed.x = this.startSpeed.x;
+    blobDog.speed.y = this.startSpeed.y;
     drawStage = bounce.draw;
+    this.blobDogSquishedR = this.RBlobDog * this.blobDogSquishedRCoefficient;
   },
-  draw(){
+  draw() {
     background(backgroundColor);
-    text("FASTER", width/2, height/4);
+    text("FASTER", width / 2, height / 4);
+    blobDog.draw();
   },
-  update(){
+  moveDog() {
+    blobDog.pos.x = blobDog.pos.x + blobDog.speed.x * lp.step;
+    blobDog.pos.y = blobDog.pos.y + blobDog.speed.y * lp.step;
+  },
+  restingUntil: null,
+  update() {
+    const isTouchingWall = blobDog.pos.x + this.RBlobDog > this.wallX;
+    const isTouchingFloor = blobDog.pos.y + this.RBlobDog > this.floorY;
+    if (this.isAirborne) {      
+      if (isTouchingWall || isTouchingFloor) {
+        this.isAirborne = false;
+        blobDog.speed.x = blobDog.speed.x / this.slowdownOnContact;
+        blobDog.speed.y = blobDog.speed.y / this.slowdownOnContact;
+        //also the squish rotation should be changed.
+      }
+    }
+    
+    if (!this.isAirborne) {
+      const isResting = this.restingUntil !== null;
+      const isSquishedToTheWall = blobDog.pos.x + this.blobDogSquishedR > this.wallX;
+      const isSquishedToTheFloor = blobDog.pos.y + this.blobDogSquishedR > this.floorY;
+      const shouldStartResting = !isResting && (isSquishedToTheWall || isSquishedToTheFloor);
+      if (shouldStartResting) {
+        this.restingUntil = lp.seconds + this.restDuration;
+      }
 
+      const shouldStopResting = isResting && (this.restingUntil < lp.seconds);
+      if (shouldStopResting) {
+        this.restingUntil = null;
+        if (isSquishedToTheFloor) { blobDog.speed.y = - this.startSpeed.y / this.slowdownOnContact }
+        if (isSquishedToTheWall) { blobDog.speed.x = - this.startSpeed.x / this.slowdownOnContact }
+      }
+      
+      const shouldBecomeAirborne = !(isTouchingFloor || isTouchingWall);
+      if(shouldBecomeAirborne){
+        this.isAirborne = true;
+        blobDog.speed.x = blobDog.speed.x * this.slowdownOnContact;
+        blobDog.speed.y = blobDog.speed.y * this.slowdownOnContact;
+      }
+    }
+
+    
+
+    const notResting = this.restingUntil === null;
+    if (notResting) { this.moveDog(); };
   }
 }
 
-const bounceSetup = lp.createForce().at(0).do(bounce.setup);
 
-const bounceLoop = lp.createForce().after(bounceSetup).for(1).do(bounce.update);
+/** |     start  |the preview is broken. Better right-click the function and go to definition
+ *  |         \  |the path of the bounces is depicted.
+ *  |          \ |this is a primitive physics simulation.
+ *  |           \|
+ *  |    end    /|It returns an object with x and y values. Both are positive.
+ *  |       \  / |
+ *  |        \/  |
+ */
+function precalculateAirborneSpeedForBounce() {
+  const time = bounce.duration;//the whole time getting from start to end will take
+  const restTime = bounce.restDuration; //in the middle of the bounce
+  const bounceNum = 2; //how many bounces happen
+  const startX = bounce.startPoint.x;
+  const startY = bounce.startPoint.y;
+  const endX = bounce.endPoint.x;
+  const endY = bounce.endPoint.y;
+  const wallX = bounce.wallX;
+  const floorY = bounce.floorY;
+  const slowdown = bounce.slowdownOnContact; // > 1
+
+
+  const movingTime = time - restTime * bounceNum;
+  const blobDogSquishedR = bounce.RBlobDog * bounce.blobDogSquishedRCoefficient;
+  const padding = blobDogSquishedR;
+  const distanceX = (wallX - startX) - padding + (wallX - endX) - padding;
+  const distanceY = (floorY - startY) - padding + (floorY - endY) - padding;
+  //the number 2 is here because we account for touchdown as well as takeoff
+  const slowDistance = bounceNum * (bounce.RBlobDog - blobDogSquishedR) * 2;
+  //let's pretend that the whole distance will be crossed at the airborne speed,
+  //but the time is unchanged, so the distance stretches.
+  const normalizedDistance = {
+    x: distanceX - slowDistance + slowDistance * slowdown,
+    y: distanceY - slowDistance + slowDistance * slowdown
+  }
+  const airborneSpeed = {
+    x: normalizedDistance.x / movingTime,
+    y: normalizedDistance.y / movingTime
+  }
+  return airborneSpeed;
+}
+
+const bounceSetup = lp.createForce().at(0).do(()=>{bounce.setup();});
+
+const bounceLoop = lp.createForce().after(bounceSetup).for(bounce.duration).do(()=>{bounce.update();});
 
 
 
@@ -26,7 +131,7 @@ const kickSetup = lp.createForce().afterPrevious().do(() => {
   textSize(40);
   drawStage = function () {
     background(backgroundColor);
-    text("STRONGER", width/2, height/4);
+    text("STRONGER", width / 2, height / 4);
     blobDog.draw();
   }
 });
@@ -47,60 +152,65 @@ const kick = {
     },
     {
       name: "face your opponent",
-      after:0.2,
+      after: 0.2,
       leftHeading: 0.2,
-      posX: canvasSize.width/3,
+      posX: canvasSize.width / 3,
       skew: 0,
     },
     {
       name: "contact",
       after: 0.3,
-      posX: 2*canvasSize.width/3,
-      skew: -Math.PI/12,
-      curve(start, end, amt){//todo: implement curves
+      posX: 2 * canvasSize.width / 3,
+      skew: 0,
+      curve(start, end, amt) {//todo: implement curves
         return lerp(start, end, amt);
       },
     },
     {
       name: "make her wait for it",
-      after:0.2, 
-      posX: 2*canvasSize.width/3,
-      skew: -Math.PI/12,
-      bodRot:0
+      after: 0.2,
+      posX: 2 * canvasSize.width / 3,
+      bodRot: 0,
+      skew: 0
     },
     {
-      name:"peck",
+      name: "peck",
       after: 0.1,
-      bodRot: -Math.PI/10,
+      bodRot: -Math.PI / 10,
+      skew: -Math.PI / 12,
+    },
+    {
+      name: "savor",
+      after: 0.15,
+      bodRot: -Math.PI / 10,
+      skew: -Math.PI / 12,
     },
     {
       name: "unPeck",
       after: 0.1,
       bodRot: 0,
-      posX: 2*canvasSize.width/3,
-      skew: -Math.PI/12,
+      posX: 2 * canvasSize.width / 3,
+      skew: 0,
     },
     {
       name: "return",
       after: 0.2,
-      posX: canvasSize.width/3,
-      skew:0,
+      posX: canvasSize.width / 3,
       bodRot: 0,
     }
   ]
 }
 
-const kickSceneDuration = 1 + durationFromKeyFrames(kick.keyFrames);
-
+const kickSceneDuration = durationFromKeyFrames(kick.keyFrames);
 const kickLoop = lp.createForce().after(kickSetup).for(kickSceneDuration).do(
   () => {
-    const now = lp.seconds - kickLoop._start;
+    let now = lp.seconds - kickLoop._start;
     blobDog.pos.x = getValueFromKeyFrames(now, 'posX', kick.keyFrames);
     blobDog.pos.y = getValueFromKeyFrames(now, 'posY', kick.keyFrames);
-    blobDog.skew =  getValueFromKeyFrames(now, "skew", kick.keyFrames);
-    blobDog.pose.heading.horizontal = 
-                    getValueFromKeyFrames(now, "leftHeading", kick.keyFrames);
-    blobDog.rot =   getValueFromKeyFrames(now, "bodRot", kick.keyFrames);
+    blobDog.skew = getValueFromKeyFrames(now, "skew", kick.keyFrames);
+    blobDog.pose.heading.horizontal =
+      getValueFromKeyFrames(now, "leftHeading", kick.keyFrames);
+    blobDog.rot = getValueFromKeyFrames(now, "bodRot", kick.keyFrames);
   }
 );
 
@@ -113,7 +223,7 @@ const highHopSetup = lp.createForce().afterPrevious().do(
     blobDog.body.d = canvasSize.height / 3;
     drawStage = function () {
       background(backgroundColor);
-      text("BETTER", width/2, height/4);
+      text("BETTER", width / 2, height / 4);
       blobDog.draw();
     }
   }
@@ -177,7 +287,7 @@ const weightliftingSetup = lp.createForce().afterPrevious().do(() => {
   barbell.setSize(blobDog.body.d * 2);
   drawStage = function () {
     background(backgroundColor);
-    text("HARDER", width/2, height/4);
+    text("HARDER", width / 2, height / 4);
     blobDog.draw();
     barbell.draw();
     blobDog.drawPaws();//they are on the barbell, so they have to be drawn on after it
@@ -210,7 +320,8 @@ const weightLiftingLoop = lp.createForce().after(weightliftingSetup).for(3).do(
     const barbellPath = cos(angle - Math.PI / 6) * wl.barbellAmplitude * width;
 
     //I chose the the top point to be the center of barbell's sinusoid
-    const topOfDogHead = blobDog.pos.y - (blobDog.body.d / 2) * blobDog.squeeze * blobDog.squeeze;//because of how the squeeze is applied now
+    const topOfDogHead = blobDog.getYofHeadTop();
+    //double squeeze because of how the squeeze is applied now, consider creating a 
     barbell.holdsY = topOfDogHead + barbellPath;
 
     const barbellEndsPath = cos(angle - Math.PI / 6 - Math.PI / 6) * wl.barbellAmplitude * width / 2;
@@ -223,7 +334,3 @@ const weightLiftingLoop = lp.createForce().after(weightliftingSetup).for(3).do(
     blobDog.takeHoldRight(rightHoldX, barbell.holdsY);
   }
 );
-
-
-
-

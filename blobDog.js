@@ -8,6 +8,7 @@ const blobDog = {
     this.ears.angle = 0;
     this.skew = 0;
     this.pose.heading.horizontal = 0;
+    this.body.d = height/3;
   },
   pose: {
     heading: {
@@ -37,6 +38,9 @@ const blobDog = {
   rot: 0,
   squeeze: 1,
   squeezeRot: 0,
+  setSize(diameter){
+    this.body.d = diameter;
+  },
   body: {
     d: 200,
     mainClr: 'beige',
@@ -140,6 +144,14 @@ const blobDog = {
     pop();
   },
   skew : 0,
+  getYofHeadTop(){
+    //considers the squeeze but not the scale.
+    const center = blobDog.pos.y;
+    const dogR = (blobDog.body.d / 2);
+    //with squeeze applied
+    const squeezedR = dogR * blobDog.squeeze * blobDog.squeeze;
+    return this.pos.y - squeezedR; 
+  },
   draw() {
     push();
     translate(this.pos.x, this.pos.y);

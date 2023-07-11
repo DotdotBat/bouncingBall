@@ -1,27 +1,27 @@
 const bounce = {
-  duration: 3,
-  slowdownOnContact: 2,// > 1
-  restDuration: 0.2,
+  duration: 1,
+  slowdownOnContact: 1,// > 1
+  restDuration: 0,
   startPoint: { x: 2 * canvasSize.width / 3, y: canvasSize.height / 3 },
   endPoint: { x: canvasSize.width / 3, y: 2 * canvasSize.height / 3 },
   wallX: canvasSize.width,
   floorY: canvasSize.height,
   RBlobDog: canvasSize.height / 8,
   blobDogSquishedRCoefficient: 0.7,
-  blobDogSquishedR: undefined,
+  blobDogFullySquishedR: undefined,
   startSpeed: { x: 1, y: 1 },//will be calculated at setup
   isAirborne: true,
   setup() {
     backgroundColor = 'green';
     blobDog.reset();
-    blobDog.body.d = 2* this.RBlobDog;
+    blobDog.body.d = 2 * this.RBlobDog;
     blobDog.pos.x = this.startPoint.x;
     blobDog.pos.y = this.startPoint.y;
     this.startSpeed = precalculateAirborneSpeedForBounce();
     blobDog.speed.x = this.startSpeed.x;
     blobDog.speed.y = this.startSpeed.y;
     drawStage = bounce.draw;
-    this.blobDogSquishedR = this.RBlobDog * this.blobDogSquishedRCoefficient;
+    this.blobDogFullySquishedR = this.RBlobDog * this.blobDogSquishedRCoefficient;
   },
   draw() {
     background(backgroundColor);
@@ -36,20 +36,29 @@ const bounce = {
   update() {
     const isTouchingWall = blobDog.pos.x + this.RBlobDog > this.wallX;
     const isTouchingFloor = blobDog.pos.y + this.RBlobDog > this.floorY;
-    if (this.isAirborne) {      
-      if (isTouchingWall || isTouchingFloor) {
+
+    if (this.isAirborne) {
+      const startingBounce = isTouchingWall || isTouchingFloor
+      if (startingBounce) {
         this.isAirborne = false;
+
         blobDog.speed.x = blobDog.speed.x / this.slowdownOnContact;
         blobDog.speed.y = blobDog.speed.y / this.slowdownOnContact;
-        //also the squish rotation should be changed.
+
+        let contactAngle;
+        if (isTouchingWall) contactAngle = 0;
+        if (isTouchingFloor) contactAngle = -Math.PI / 2;
+        const squishUpAngle = Math.PI + contactAngle;
+        blobDog.squeezeRot = squishUpAngle;
       }
     }
-    
-    if (!this.isAirborne) {
+
+    const isMidBounce = !this.isAirborne;
+    if (isMidBounce) {
       const isResting = this.restingUntil !== null;
-      const isSquishedToTheWall = blobDog.pos.x + this.blobDogSquishedR > this.wallX;
-      const isSquishedToTheFloor = blobDog.pos.y + this.blobDogSquishedR > this.floorY;
-      const shouldStartResting = !isResting && (isSquishedToTheWall || isSquishedToTheFloor);
+      const isFullySquishedToTheWall = blobDog.pos.x + this.blobDogFullySquishedR > this.wallX;
+      const isFullySquishedToTheFloor = blobDog.pos.y + this.blobDogFullySquishedR > this.floorY;
+      const shouldStartResting = !isResting && (isFullySquishedToTheWall || isFullySquishedToTheFloor);
       if (shouldStartResting) {
         this.restingUntil = lp.seconds + this.restDuration;
       }
@@ -57,19 +66,30 @@ const bounce = {
       const shouldStopResting = isResting && (this.restingUntil < lp.seconds);
       if (shouldStopResting) {
         this.restingUntil = null;
-        if (isSquishedToTheFloor) { blobDog.speed.y = - this.startSpeed.y / this.slowdownOnContact }
-        if (isSquishedToTheWall) { blobDog.speed.x = - this.startSpeed.x / this.slowdownOnContact }
+        if (isFullySquishedToTheFloor) { blobDog.speed.y = - this.startSpeed.y / this.slowdownOnContact }
+        if (isFullySquishedToTheWall) { blobDog.speed.x = - this.startSpeed.x / this.slowdownOnContact }
       }
-      
+
       const shouldBecomeAirborne = !(isTouchingFloor || isTouchingWall);
-      if(shouldBecomeAirborne){
+      if (shouldBecomeAirborne) {
         this.isAirborne = true;
         blobDog.speed.x = blobDog.speed.x * this.slowdownOnContact;
         blobDog.speed.y = blobDog.speed.y * this.slowdownOnContact;
-      }
-    }
 
-    
+      }
+
+      //update squish
+      let distanceFromBlobDogCenterToWallOrFloor;
+      if(isTouchingFloor){
+        distanceFromBlobDogCenterToWallOrFloor = this.floorY - blobDog.pos.y;
+      }
+      if(isTouchingWall){
+        distanceFromBlobDogCenterToWallOrFloor = this.wallX - blobDog.pos.x;
+      }
+      const heightMultiplier = distanceFromBlobDogCenterToWallOrFloor/this.RBlobDog;
+      blobDog.setSquish(heightMultiplier);
+
+    }
 
     const notResting = this.restingUntil === null;
     if (notResting) { this.moveDog(); };
@@ -118,9 +138,9 @@ function precalculateAirborneSpeedForBounce() {
   return airborneSpeed;
 }
 
-const bounceSetup = lp.createForce().at(0).do(()=>{bounce.setup();});
+const bounceSetup = lp.createForce().at(0).do(() => { bounce.setup(); });
 
-const bounceLoop = lp.createForce().after(bounceSetup).for(bounce.duration).do(()=>{bounce.update();});
+const bounceLoop = lp.createForce().after(bounceSetup).for(bounce.duration).do(() => { bounce.update(); });
 
 
 
@@ -256,9 +276,9 @@ const highHopLoop = lp.createForce().after(highHopSetup).for(3).do(
     //derivative of x^2 is x*2
 
     blobDog.squeezeRot = blobDog.speed.heading();
-    blobDog.squeeze = 1;
+    blobDog._squeeze = 1;
     if (abs(progress) > 0.3) {
-      blobDog.squeeze = 1 + 0.1 * (abs(progress) - 0.3);
+      blobDog._squeeze = 1 + 0.1 * (abs(progress) - 0.3);
     }
 
     blobDog.rot = -progress * Math.PI / 24;
@@ -313,7 +333,7 @@ const weightLiftingLoop = lp.createForce().after(weightliftingSetup).for(3).do(
     const angle = wlLoop._start + (2 * Math.PI * lp.seconds / wl.period);
     const progress = (1 - cos(angle)) / 2;
     const crouching = wl.lowPoint + (wl.highPoint - wl.lowPoint) * progress;
-    blobDog.squeeze = crouching;
+    blobDog._squeeze = crouching;
     //keep the dog anchored
     blobDog.pos.y = wl.blobDogStandsOnPoint.y - (blobDog.body.d / 2) * crouching * crouching;
 

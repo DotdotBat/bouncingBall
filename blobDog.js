@@ -1,14 +1,14 @@
 const blobDog = {
-  reset(){
-    this.squeeze = 1;
-    this.squeezeRot = Math.PI/2;
-    this.pos = createVector(width/2, height/2);
-    this.speed = createVector(0,0);
+  reset() {
+    this._squeeze = 1;
+    this.squeezeRot = Math.PI / 2;
+    this.pos = createVector(width / 2, height / 2);
+    this.speed = createVector(0, 0);
     this.rot = 0;
     this.ears.angle = 0;
     this.skew = 0;
     this.pose.heading.horizontal = 0;
-    this.body.d = height/3;
+    this.body.d = height / 3;
   },
   pose: {
     heading: {
@@ -21,24 +21,27 @@ const blobDog = {
     }
   },
   pos: { x: 250, y: 250 },
-  prePos : {x: NaN, y: NaN},
-  savePrePos(){
+  prePos: { x: NaN, y: NaN },
+  savePrePos() {
     this.prePos.x = this.pos.x;
     this.prePos.y = this.pos.y;
   },
   ///call only if saved the previous frame position in prePos (before changing the position)
-  calculateSpeed(){
+  calculateSpeed() {
     const elapsedSeconds = lp.step;
     const dx = this.pos.x - this.prePos.x;
     const dy = this.pos.y - this.prePos.y;
-    this.speed.x = dx/elapsedSeconds;
-    this.speed.y = dy/elapsedSeconds;
+    this.speed.x = dx / elapsedSeconds;
+    this.speed.y = dy / elapsedSeconds;
   },
   speed: { x: 0, y: 0 },
   rot: 0,
-  squeeze: 1,
+  _squeeze: 1,
+  setSquish(heightMultiplier) {
+    this._squeeze = sqrt(heightMultiplier);
+  },
   squeezeRot: 0,
-  setSize(diameter){
+  setSize(diameter) {
     this.body.d = diameter;
   },
   body: {
@@ -100,11 +103,11 @@ const blobDog = {
     stroke(this.body.mainClr);
     rotate(-this.ears.basePosAngle);
     translate(d / 2, 0);
-    shearY(this.ears.angle -3.14 / 6);
+    shearY(this.ears.angle - 3.14 / 6);
     triangle(
       -d / 25, -d * this.ears.baseWidth / 2,
       -d / 25, +d * this.ears.baseWidth / 2,
-      d * this.ears.length * cos(this.ears.angle-3.14 / 6), 0
+      d * this.ears.length * cos(this.ears.angle - 3.14 / 6), 0
     );
     //can't I just flip the world around and arrive at the second ear?
     pop();
@@ -112,11 +115,11 @@ const blobDog = {
     stroke(this.body.patternClr);
     rotate(PI + this.ears.basePosAngle);
     translate(d / 2, 0);
-    shearY(-this.ears.angle+3.14 / 6);
+    shearY(-this.ears.angle + 3.14 / 6);
     triangle(
       -d / 25, -d * this.ears.baseWidth / 2,
       -d / 25, +d * this.ears.baseWidth / 2,
-      d * this.ears.length * cos(-this.ears.angle+3.14 / 6), 0
+      d * this.ears.length * cos(-this.ears.angle + 3.14 / 6), 0
     );
     pop();
   },
@@ -143,14 +146,14 @@ const blobDog = {
     circle(lh / 2, -lv / 2, pupilR);
     pop();
   },
-  skew : 0,
-  getYofHeadTop(){
+  skew: 0,
+  getYofHeadTop() {
     //considers the squeeze but not the scale.
     const center = blobDog.pos.y;
     const dogR = (blobDog.body.d / 2);
     //with squeeze applied
-    const squeezedR = dogR * blobDog.squeeze * blobDog.squeeze;
-    return this.pos.y - squeezedR; 
+    const squeezedR = dogR * blobDog._squeeze * blobDog._squeeze;
+    return this.pos.y - squeezedR;
   },
   draw() {
     push();
@@ -158,15 +161,15 @@ const blobDog = {
     const scaleFactor = this.body.d / 100;
     scale(scaleFactor);
     rotate(this.squeezeRot);
-    scale(this.squeeze * this.squeeze, 1 / this.squeeze);
+    scale(this._squeeze * this._squeeze, 1 / this._squeeze);
     rotate(-this.squeezeRot);
     rotate(this.rot);
-    translate(0, this.body.d/3);
+    translate(0, this.body.d / 3);
     shearX(this.skew);
-    translate(0, -this.body.d/3);
+    translate(0, -this.body.d / 3);
     this.drawEars();
     this.drawBody();
-    translate(this.pose.heading.horizontal*this.body.d/2, 0);
+    translate(this.pose.heading.horizontal * this.body.d / 2, 0);
     this.drawFace();
     //this.drawDirectionalMock();
     pop();

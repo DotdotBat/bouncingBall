@@ -93,7 +93,10 @@ const loopFrameWork = {
         //we are working with the assumption that this method is called on a freshly created force
         const thisForceIndex = loopFrameWork.forces.length-1;
         const previousForceIndex = thisForceIndex - 1;
-        console.assert(previousForceIndex>=0, 'no previous forces');
+        const noPreviousForces = previousForceIndex<0;
+        if(noPreviousForces){
+          return this.at(0);//so this becomes the first force
+        }
         const previousForce = loopFrameWork.forces[previousForceIndex];
         return this.after(previousForce);
       },

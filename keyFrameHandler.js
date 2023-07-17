@@ -52,9 +52,17 @@ function getValueFromKeyFrames(time, keyName, keyFramesArray) {
     return previousFrame[keyName];
   }
   //found previous and next frame
-  const t = (time - previousFrame.time) / (nextFrame.time - previousFrame.time)
-  const value = lerp(previousFrame[keyName], nextFrame[keyName], t);
-  return value;
+  const amt = (time - previousFrame.time) / (nextFrame.time - previousFrame.time);
+  const start = previousFrame[keyName];
+  const stop = nextFrame[keyName];
+  let interpolatedValue;
+  if(nextFrame.curve === undefined){
+    interpolatedValue = lerp(start, stop, amt);
+  }
+  if(nextFrame.curve){
+    interpolatedValue = nextFrame.curve(start, stop, amt);
+  }
+  return interpolatedValue;
 }
 
 

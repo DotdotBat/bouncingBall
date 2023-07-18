@@ -107,6 +107,13 @@ const loopFrameWork = {
           loopFrameWork.recalculateDuration();
         }
         return this;
+      },
+      duration(){return this._end-this._start},
+      timeFromStart(){return loopFrameWork.seconds - this._start},
+      completeness(){
+        if(loopFrameWork.seconds<this._start)return 0;
+        if(loopFrameWork.seconds>this._end)return 1;
+        return this.timeFromStart()/this.duration();
       }
     }
     loopFrameWork.forces.push(newForce);

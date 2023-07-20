@@ -63,6 +63,7 @@ const loopFrameWork = {
       longestDuration = force._end>longestDuration?force._end:longestDuration;
     });
     this._DURATION = longestDuration;
+    return longestDuration;
     //I am not using the setter method, because it is meant for the user, and will flag that duration was manually set
   },
   createForce(){
@@ -71,13 +72,8 @@ const loopFrameWork = {
       _end: undefined,
       _virgin:true,
       _effect(){print('did not define behavior for a force');},
-      from(s){
-        this._start=s;
-        return this;
-      },
       after(anotherForce){
-        this._start = anotherForce._end;
-        this._end = this._start;
+        this._start = this._end = anotherForce._end;
         return this;
       },
       for(s){
@@ -85,8 +81,7 @@ const loopFrameWork = {
         return this;
       },
       at(s){
-        this._start = s;
-        this._end = s;
+        this._start = this._end = s;
         return this;
       },
       afterPrevious(){
@@ -108,12 +103,20 @@ const loopFrameWork = {
         }
         return this;
       },
+      until(seconds){
+        this._end = seconds;
+        return this;
+      },
       duration(){return this._end-this._start},
       timeFromStart(){return loopFrameWork.seconds - this._start},
       completeness(){
         if(loopFrameWork.seconds<this._start)return 0;
         if(loopFrameWork.seconds>this._end)return 1;
         return this.timeFromStart()/this.duration();
+      },
+      afterLast(){
+        loopFrameWork.recalculateDuration();
+        return this.at(loopFrameWork._DURATION);
       }
     }
     loopFrameWork.forces.push(newForce);

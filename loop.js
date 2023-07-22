@@ -1,5 +1,5 @@
 const loopFrameWork = {
-  _DURATION: 5,
+  _DURATION: 0,
   _currentLoopStart: 0,
   seconds: 0,
   step: 1,
@@ -56,10 +56,11 @@ const loopFrameWork = {
     }
     return now <= force._end;
   },
+  //** sets a new duration based on the current forces. */
   recalculateDuration(){
     let longestDuration = 0;
     this.forces.forEach(force => {
-      console.assert(force._end!=undefined, "there is a force, with undefined end value", force);
+      console.assert(force._end!=undefined, "there is a force, with undefined end time value", force);
       longestDuration = force._end>longestDuration?force._end:longestDuration;
     });
     this._DURATION = longestDuration;
@@ -78,10 +79,16 @@ const loopFrameWork = {
       },
       for(s){
         this._end = this._start + s;
+        if(!loopFrameWork._durationWasSetManually){
+          loopFrameWork.recalculateDuration();
+        }
         return this;
       },
       at(s){
         this._start = this._end = s;
+        if(!loopFrameWork._durationWasSetManually){
+          loopFrameWork.recalculateDuration();
+        }
         return this;
       },
       afterPrevious(){
@@ -97,31 +104,33 @@ const loopFrameWork = {
       },
       do(f){
         this._effect = f;
-        //this method is always called at the end of any force creation, so it's safe to assume if duration has to be changed, we will change it
+        return this;
+      },
+      until(seconds){
+        this._end = seconds;
         if(!loopFrameWork._durationWasSetManually){
           loopFrameWork.recalculateDuration();
         }
         return this;
       },
-      until(seconds){
-        this._end = seconds;
-        return this;
-      },
-      duration(){return this._end-this._start},
-      timeFromStart(){return loopFrameWork.seconds - this._start},
-      completeness(){
+      getDuration(){return this._end-this._start},
+      getTimeFromStart(){return loopFrameWork.seconds - this._start},
+      getCompleteness(){
         if(loopFrameWork.seconds<this._start)return 0;
         if(loopFrameWork.seconds>this._end)return 1;
-        return this.timeFromStart()/this.duration();
+        return this.getTimeFromStart()/this.getDuration();
       },
       afterLast(){
-        loopFrameWork.recalculateDuration();
         return this.at(loopFrameWork._DURATION);
       }
     }
     loopFrameWork.forces.push(newForce);
     return newForce;
-  }
+  },
+  clearForces(){
+    this.forces = [];
+    this.recalculateDuration();
+  },
 };
 
 

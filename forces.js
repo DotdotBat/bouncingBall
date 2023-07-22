@@ -52,7 +52,7 @@ const showdownTimeFrames = {
 const showdownSetup = lp.createForce().afterPrevious().do(()=>{showdown.setup();});
 const anticipatorySquish = lp.createForce().after(showdownSetup).until(showdownTimeFrames.squish).do(
   ()=>{
-    const t = showdownSetup.timeFromStart();
+    const t = showdownSetup.getTimeFromStart();
     const s = getValueFromKeyFrames(t, "squish", showdownKeyframes);
     blobDog.setSquish(s);
     //the y value also updates to account for standing, but it is already updating on it's own
@@ -90,7 +90,7 @@ const squishOnTouch = lp.createForce().after(anticipatorySquish).until(showdownT
 );
 const showdownPositionUpdate = lp.createForce().after(showdownSetup).for(showdown.fullSceneDuration()).do(
   ()=>{
-    const t = showdownSetup.timeFromStart();
+    const t = showdownSetup.getTimeFromStart();
     blobDog.pos.x = getValueFromKeyFrames(t,"x", showdownKeyframes);
     blobDog.pos.y = getValueFromKeyFrames(t,"y", showdownKeyframes);
   }
@@ -98,7 +98,7 @@ const showdownPositionUpdate = lp.createForce().after(showdownSetup).for(showdow
 
 const showdownFaceController = lp.createForce().after(showdownSetup).for(showdown.fullSceneDuration()).do(
   ()=>{
-    const t = showdownSetup.timeFromStart();
+    const t = showdownSetup.getTimeFromStart();
     const maxFacing = 0.25;
     blobDog.pose.heading.horizontal = maxFacing * getValueFromKeyFrames(t,"faceLeft", showdownKeyframes);
     const upPeckMotion = getValueFromKeyFrames(t,"faceUp", showdownKeyframes);

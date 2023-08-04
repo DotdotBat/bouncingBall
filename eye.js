@@ -6,7 +6,7 @@
     irisColor: 100,//placeholder for the future
     whitesColor: 255,
     linesNumber:30,
-    lineAngle: Math.PI/4,//should never be 0
+    lineAngle: Math.PI/4,
     twist: Math.PI,
     pupilRadius: 50,
     lookAt: Math.PI*2,

@@ -73,8 +73,8 @@ const loopFrameWork = {
       _end: undefined,
       _virgin:true,
       _effect(){print('did not define behavior for a force');},
-      after(anotherForce){
-        this._start = this._end = anotherForce._end;
+      after(anotherForce, delay=0){//todo:check if optional parameters work this way
+        this._start = this._end = anotherForce._end+delay;
         return this;
       },
       for(s){

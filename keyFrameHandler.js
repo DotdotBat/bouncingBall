@@ -62,6 +62,18 @@ function getValueFromKeyFrames(time, keyName, keyFramesArray) {
   if(nextFrame.curve){
     interpolatedValue = nextFrame.curve(start, stop, amt);
   }
+
+
+  if(isNaN(interpolatedValue)){
+    let report = "for keyName:"+  keyName+  " couldn't calculate the value at " + time;
+    if(previousFrame===null){
+      report = report + ` Previous frame: ${previousFrame.name}, value: ${start}, at: ${previousFrame.time}`;
+    }else{report = report + " No previous frame."};
+    if(nextFrame === null){
+      report= report + ` Next frame: ${nextFrame.name}, value: ${stop}, at: ${nextFrame.time}`;
+    }else{report = report+ " No next frame."};
+    console.error(report);
+  }
   return interpolatedValue;
 }
 
@@ -76,7 +88,7 @@ function initializeKeyFrameArray(arr){
   for(frame of arr){
     frame.time = frame.at !== undefined ? frame.at : previousFrameTime + frame.after;
     previousFrameTime = frame.time;
-    console.assert(frame.time !== undefined, "can't get keyFrameTime for keyFrame:", frame);
+    console.assert(!isNaN(frame.time), "can't get keyFrameTime for keyFrame:", frame);
   }
   //sort the keyframes based on the time
   arr.sort((a,b)=>{a.time-b.time});

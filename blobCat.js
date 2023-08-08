@@ -17,7 +17,7 @@ const blobCat = {
 
     },
     furColor: "purple",
-    innerEarShadowColor: undefined,
+    innerEarShadowColor: "black",
     x: canvasSize.width / 2,
     y: canvasSize.height / 2,
     r: canvasSize.height / 6,
@@ -163,15 +163,15 @@ const blobCat = {
     eye: {
         lineAngle: Math.PI/4,
         pupilColor: 0,//black
-        get radius(){return blobCat.r*0.4},
-        get pupilRadius(){return blobCat.r/10},
+        get radius(){return blobCat.r*0.5},
+        get pupilRadius(){return blobCat.r/8},
         linesNumber: 15,
         twist: Math.PI,
         //import the eye.js algorithm
     },
     drawEye(){
         const bodyR = blobCat.r;
-        const x = bodyR/3, y = -bodyR/6;
+        const x = bodyR*0.3, y = 0;
         
         if(abs(this.eye.lineAngle % (Math.PI)) < 0.01){this.eye.lineAngle=0.01}
         push();

@@ -75,9 +75,6 @@ const loopFrameWork = {
       _effect(){print('did not define behavior for a force');},
       after(anotherForce, delay=0){//todo:check if optional parameters work this way
         this._start = this._end = anotherForce._end+delay;
-        if(delay!=0){
-          print("after ", delay, " at ", this._end);
-        }
         return this;
       },
       for(s){

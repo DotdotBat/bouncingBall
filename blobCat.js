@@ -160,13 +160,77 @@ const blobCat = {
 
         pop();
     },
+    eyePresets:{
+        idle:{
+            pupilFraction: 6,
+            lineAngle: Math.PI/4,
+            retinaTwist: Math.PI,
+            linesNumber: 15,
+        },
+        squinting:{
+            pupilFraction: 6,
+            lineAngle: Math.PI/15,
+            retinaTwist: 0,
+            linesNumber: 10,
+        },
+        blank:{
+            pupilFraction: 100,
+            lineAngle: 0,
+            retinaTwist: Math.PI,
+            linesNumber: 20,
+        },
+        toxic:{
+            pupilFraction: 100,
+            lineAngle: -Math.PI/6,
+            retinaTwist: 2* Math.PI/3,
+            linesNumber: 30,
+        },
+        closedAperture:{
+            pupilFraction: 100,
+            lineAngle: -Math.PI/4,
+            retinaTwist: Math.PI/2,
+            linesNumber: 40,
+        },
+        catIris:{
+            pupilFraction: 3,
+            lineAngle: 2*Math.PI/5,
+            retinaTwist: Math.PI,
+            linesNumber: 13,
+        },
+        barPupil:{
+            pupilFraction: 4,
+            lineAngle: 0,
+            retinaTwist: 0,
+            linesNumber: 13,
+        },
+        confused:{
+            pupilFraction: 10,
+            lineAngle: -Math.PI/6,
+            retinaTwist: Math.PI/3,
+            linesNumber: 50,
+        },
+        sideGlance:{
+            pupilFraction: -5,
+            lineAngle: Math.PI/3,
+            retinaTwist: 0,
+            linesNumber: 15,
+        },
+        end:{
+            pupilFraction: -0.04,
+            lineAngle: Math.PI/2,
+            retinaTwist: 0,
+            linesNumber: 12,
+        },
+
+    },
     eye: {
         lineAngle: Math.PI/4,
         pupilColor: 0,//black
         get radius(){return blobCat.r*0.5},
-        get pupilRadius(){return blobCat.r/8},
+        pupilFraction : 8,
         linesNumber: 15,
-        twist: Math.PI,
+        retinaTwist: Math.PI,
+        lookingDirection: 0,
         //import the eye.js algorithm
     },
     drawEye(){
@@ -175,27 +239,28 @@ const blobCat = {
         
         if(abs(this.eye.lineAngle % (Math.PI)) < 0.01){this.eye.lineAngle=0.01}
         push();
-        translate(x, y)
+        translate(x, y);
         stroke(255);
         fill(this.eye.pupilColor);
         drawingContext.save();
         circle(0, 0, this.eye.radius*2);
         drawingContext.clip();
-        const centerStartX = - this.eye.pupilRadius/sin(this.eye.lineAngle);
-        const furthestPoint = - this.eye.radius/sin(this.eye.lineAngle);
+        rotate(this.eye.lookingDirection);
+        const pupilRadius = this.eye.radius/this.eye.pupilFraction;
+        const centerStartX = - pupilRadius/abs(sin(this.eye.lineAngle));
+        const furthestPoint = - this.eye.radius/abs(sin(this.eye.lineAngle));
         const lineEndOffset = this.eye.radius /tan(this.eye.lineAngle);
         for(let i = 1; i<this.eye.linesNumber; i++){
           const x0 = lerp(centerStartX, furthestPoint,  ((i-1)/(this.eye.linesNumber-1)));
           const x1 = x0 + lineEndOffset;
           line(x0, 0, x1, this.eye.radius);
           line(x0, 0, x1, -this.eye.radius);
-          rotate(this.eye.twist);
+          rotate(this.eye.retinaTwist);
         }
         
-        //circle(0,0,this.eye.pupilRadius*2);//somehow with this circle that I have added for debug purposed, the eye is more recognizable, so I will leave it here.
-        //In the future, it should follow the center of the pupil
         
         drawingContext.restore();
         pop();
       }
 }
+

@@ -17,3 +17,12 @@ if (testingMode) {
         }
     );
 }
+
+let alreadySaidOnce = false;
+
+/** no matter how many times this function will be called, it will print it's arguments only once*/
+function printOnlyOnce(...thingsToSay){
+    if(alreadySaidOnce)return;
+    alreadySaidOnce = true;
+    print(...thingsToSay);
+}

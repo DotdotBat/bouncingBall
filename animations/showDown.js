@@ -1,7 +1,7 @@
 const showdown = {
   squishCoefficient: 0.75,
   fullSceneDuration() {
-    return (this.beatNum + 0.5) * this.oneBeat;// this ia a placeholder until I figure out the length of the 8 beats segment
+    return (this.beatNum + 1) * this.oneBeat;// this ia a placeholder until I figure out the length of the 8 beats segment
   },
   catY: canvasSize.height / 2,
   catX: canvasSize.width / 2,
@@ -26,6 +26,8 @@ const showdown = {
     background(backgroundColor);
     blobDog.draw();
     blobCat.draw();
+    
+    optionalVFXDraw();
   },
   beatTime(num) {
     return num * this.oneBeat;
@@ -125,7 +127,12 @@ const showdownExpressions = lp.createForce().after(showdownSetup).for(showdown.f
     blobCat.ears.l.cover = getValueFromKeyFrames(t, "leftEarCover", showdownKeyframes);
     blobCat.ears.r.lift = getValueFromKeyFrames(t, "rightEarLift", showdownKeyframes);
     blobCat.ears.r.cover = getValueFromKeyFrames(t, "rightEarCover", showdownKeyframes);
-    //print(getValueFromKeyFrames(t, "leftEarLift", showdownKeyframes));
+    blobCat.eye.retinaTwist = getValueFromKeyFrames(t, "retinaTwist", showdownKeyframes);
+    blobCat.eye.lineAngle = getValueFromKeyFrames(t, "lineAngle", showdownKeyframes);
+    blobCat.eye.linesNumber = getValueFromKeyFrames(t, "linesNumber", showdownKeyframes);
+    blobCat.eye.pupilFraction = getValueFromKeyFrames(t, "pupilFraction", showdownKeyframes);
+    blobCat.eye.lookingDirection = getValueFromKeyFrames(t, "lookingDirection", showdownKeyframes);
+    //todo: add overall direction
   }
 )
 const showdownKeyframes = [
@@ -141,6 +148,7 @@ const showdownKeyframes = [
     leftEarCover: blobCat.earExpressionPresets.down.cover,
     rightEarLift: blobCat.earExpressionPresets.down.lift,
     rightEarCover: blobCat.earExpressionPresets.down.cover,
+    ...blobCat.eyePresets.closedAperture,
   },
   {
     name:"reactionStart",
@@ -150,6 +158,7 @@ const showdownKeyframes = [
     leftEarCover: blobCat.earExpressionPresets.attention.cover,
     rightEarLift: blobCat.earExpressionPresets.down.lift,
     rightEarCover: blobCat.earExpressionPresets.down.cover,
+    ...blobCat.eyePresets.idle,
   },
   {
     name: "anticipatory squish",
@@ -164,16 +173,18 @@ const showdownKeyframes = [
     leftEarCover: blobCat.earExpressionPresets.neutral.cover,
     rightEarLift: blobCat.earExpressionPresets.neutral.lift,
     rightEarCover: blobCat.earExpressionPresets.neutral.cover,
+    ...blobCat.eyePresets.catIris,
   },
   {
     name: "jump started",
     after: 0.2,
-    //todo: check why the lack of time in this keyframe was not reported!
     //cat
     leftEarLift: blobCat.earExpressionPresets.attention.lift,
     leftEarCover: blobCat.earExpressionPresets.attention.cover,
     rightEarLift: blobCat.earExpressionPresets.attention.lift,
     rightEarCover: blobCat.earExpressionPresets.attention.cover,
+    ...blobCat.eyePresets.sideGlance,
+    lookingDirection: -Math.PI,
   },
   {
     name: "high in the sky",
@@ -194,7 +205,8 @@ const showdownKeyframes = [
     curve(prev, curr, amt) {
       const temp = lerp(prev, curr, amt);
       return lerp(prev, temp, amt);
-    }
+    },
+    ...blobCat.eyePresets.squinting,
   },
   {
     name: "wall jump linear",
@@ -208,6 +220,7 @@ const showdownKeyframes = [
     leftEarCover: blobCat.earExpressionPresets.neutral.cover,
     rightEarLift: blobCat.earExpressionPresets.neutral.lift,
     rightEarCover: blobCat.earExpressionPresets.neutral.cover,
+    lookingDirection:-Math.PI/8
   },
   {
     name: "bounce anticipation",
@@ -219,6 +232,8 @@ const showdownKeyframes = [
     faceUp: 1,
     faceLeft: -1,
     blobDogEarAngle: 0,
+    ...blobCat.eyePresets.barPupil,
+    lookingDirection: -Math.PI/7
   },
   {
     name: "floor Jump",
@@ -231,6 +246,8 @@ const showdownKeyframes = [
     leftEarCover: blobCat.earExpressionPresets.neutral.cover,
     rightEarLift: blobCat.earExpressionPresets.neutral.lift,
     rightEarCover: blobCat.earExpressionPresets.neutral.cover,
+    ...blobCat.eyePresets.confused,
+    heartResolution:1,
   },
   {
     name: "I am here kitty-cat",
@@ -263,16 +280,14 @@ const showdownKeyframes = [
     leftEarCover: blobCat.earExpressionPresets.neutral.cover,
     rightEarLift: blobCat.earExpressionPresets.neutral.lift,
     rightEarCover: blobCat.earExpressionPresets.neutral.cover,
+    ...blobCat.eyePresets.sideGlance,
+    lookingDirection: Math.PI,
   },
   {
     name: "start hit",
     at: showdownTimeFrames.kiss - 0.1,
     x: showdown.landX,
-    //cat
-    leftEarLift: blobCat.earExpressionPresets.neutral.lift,
-    leftEarCover: blobCat.earExpressionPresets.neutral.cover,
-    rightEarLift: blobCat.earExpressionPresets.neutral.lift,
-    rightEarCover: blobCat.earExpressionPresets.neutral.cover,
+    heartResolution:8,
   },
   {
     name: "deliver the hit",
@@ -281,11 +296,6 @@ const showdownKeyframes = [
     faceUp: 0,
     faceLeft: 1,
     blobDogEarAngle: Math.PI / 3,    
-    //cat
-    leftEarLift: blobCat.earExpressionPresets.attention.lift,
-    leftEarCover: blobCat.earExpressionPresets.attention.cover,
-    rightEarLift: blobCat.earExpressionPresets.attention.lift,
-    rightEarCover: blobCat.earExpressionPresets.attention.cover,
   },
   {
     name: "smug enjoyment",
@@ -297,6 +307,8 @@ const showdownKeyframes = [
     leftEarCover: blobCat.earExpressionPresets.down.cover,
     rightEarLift: blobCat.earExpressionPresets.down.lift,
     rightEarCover: blobCat.earExpressionPresets.down.cover,
+    ...blobCat.eyePresets.end,
+    heartResolution:50,
   }
 ]
 

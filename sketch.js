@@ -11,7 +11,7 @@ const lp = loopFrameWork;
 function setup() {
   const cs = canvasSize;
   createCanvas(cs.width, cs.height);
-  frameRate(30);
+  //frameRate(30);
   pixelDensity();
   textSize(height/12);
 }

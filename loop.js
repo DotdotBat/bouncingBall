@@ -12,14 +12,14 @@ const loopFrameWork = {
     this.updateSecondsAndStart();
     if ((!this._notFirstCall) || this.isStart) {
       this.forces.forEach(force => { force._virgin = true; });
-      this._notFirstCall=true;
+      this._notFirstCall = true;
     }
     this.forces.forEach(force => {
       if (this.forceIsApplicable(force))
         force._effect();
     });
   },
-  isStart:true,
+  isStart: true,
 
   restart() {
     this._currentLoopStart = millis() / 1000;
@@ -39,18 +39,18 @@ const loopFrameWork = {
       this.seconds -= this._DURATION;
       this._currentLoopStart += this._DURATION;
       this.isStart = true;
-    }else{this.isStart = false;}
+    } else { this.isStart = false; }
   },
 
   forces: [],
   forceIsApplicable(force) {//currently supports only forces with start and end values
-    if (force._start == undefined || force._end == undefined){
+    if (force._start == undefined || force._end == undefined) {
       console.error('unhandled force type', force);
     }
-     
+
     //force type - range (has a start and a end value)
     const now = this.seconds;
-    
+
     if (now < force._start) return false;
     if (force._virgin) {
       force._virgin = false;
@@ -59,77 +59,90 @@ const loopFrameWork = {
     return now <= force._end;
   },
   //** sets a new duration based on the current forces. */
-  recalculateDuration(){
+  recalculateDuration() {
     let longestDuration = 0;
     this.forces.forEach(force => {
-      console.assert(force._end!=undefined, "there is a force, with undefined end time value", force);
-      longestDuration = force._end>longestDuration?force._end:longestDuration;
+      console.assert(force._end != undefined, "there is a force, with undefined end time value", force);
+      longestDuration = force._end > longestDuration ? force._end : longestDuration;
     });
     this._DURATION = longestDuration;
     return longestDuration;
     //I am not using the setter method, because it is meant for the user, and will flag that duration was manually set
   },
-  createForce(){
+  createForce() {
     const newForce = {
       _start: undefined,
+      set start(time) { this._start = time; },
       _end: undefined,
-      _virgin:true,
-      _effect(){print('did not define behavior for a force');},
-      after(anotherForce, delay=0){//todo:check if optional parameters work this way
-        this._start = this._end = anotherForce._end+delay;
-        return this;
-      },
-      for(s){
-        this._end = this._start + s;
-        if(!loopFrameWork._durationWasSetManually){
+      /**@param {number} time*/
+      set end(time) {
+        this._end = time;
+        if (!loopFrameWork._durationWasSetManually) {
           loopFrameWork.recalculateDuration();
-        }
+        };
+      },
+      _virgin: true,
+      _effect() { print('did not define behavior for a force'); },
+      after(anotherForce, delay = 0) {//todo:check if optional parameters work this way
+        this.start = this._end = anotherForce._end + delay;
         return this;
       },
-      at(s){
-        this._start = this._end = s;
-        if(!loopFrameWork._durationWasSetManually){
-          loopFrameWork.recalculateDuration();
-        }
+      for(s) {
+        this.end = this._start + s;
         return this;
       },
-      afterPrevious(){
+      at(s) {
+        this.start = this.end = s;
+        return this;
+      },
+      afterPrevious() {
         //we are working with the assumption that this method is called on a freshly created force
-        const thisForceIndex = loopFrameWork.forces.length-1;
+        const thisForceIndex = loopFrameWork.forces.length - 1;
         const previousForceIndex = thisForceIndex - 1;
-        const noPreviousForces = previousForceIndex<0;
-        if(noPreviousForces){
+        const noPreviousForces = previousForceIndex < 0;
+        if (noPreviousForces) {
           return this.at(0);//so this becomes the first force
         }
         const previousForce = loopFrameWork.forces[previousForceIndex];
         return this.after(previousForce);
       },
-      do(f){
+      do(f) {
         this._effect = f;
         return this;
       },
-      until(seconds){
-        this._end = seconds;
-        if(!loopFrameWork._durationWasSetManually){
-          loopFrameWork.recalculateDuration();
-        }
+      until(seconds) {
+        this.end = seconds;
         return this;
       },
-      getDuration(){return this._end-this._start},
-      getTimeFromStart(){return loopFrameWork.seconds - this._start},
-      getCompleteness(){
-        if(loopFrameWork.seconds<this._start)return 0;
-        if(loopFrameWork.seconds>this._end)return 1;
-        return this.getTimeFromStart()/this.getDuration();
+      along(f) {
+        this.start = f._start;
+        this.end = f._end;
+        return this;
       },
-      afterLast(){
-        return this.at(loopFrameWork._DURATION);
+      getDuration() { return this._end - this._start },
+      getTimeFromStart() { return loopFrameWork.seconds - this._start },
+      getCompleteness() {
+        if (loopFrameWork.seconds < this._start) return 0;
+        if (loopFrameWork.seconds > this._end) return 1;
+        return this.getTimeFromStart() / this.getDuration();
+      },
+      afterLast() {//todo:this will backfire if duration was set manually. fix
+        if (!loopFrameWork._durationWasSetManually){
+          const lastForceEnd = loopFrameWork._DURATION;
+          return this.at(lastForceEnd);
+        }
+        
+        const lastEnd = 0;
+        for (const f of loopFrameWork.forces) {
+          if(lastEnd<f._end)lastEnd=f._end;
+        }
+        return this.at(lastEnd);
       }
     }
     loopFrameWork.forces.push(newForce);
     return newForce;
   },
-  clearForces(){
+  clearForces() {
     this.forces = [];
     this.recalculateDuration();
   },

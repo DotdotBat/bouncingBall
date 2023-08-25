@@ -9,6 +9,7 @@ const blobDog = {
     this.skew = 0;
     this.pose.heading.horizontal = 0;
     this.body.d = height / 3;
+    this.visibleEffort = false;
   },
   pose: {
     heading: {
@@ -64,16 +65,27 @@ const blobDog = {
     drawingContext.restore();
     pop();
   },
+  visibleEffort:true,
   drawFace() {
     const d = this.defaultDiameter;
     //eyes
     const eyeLevel = d / 12;
-    const eyeDistance = d / 5;
-    fill(255);
-    strokeWeight(d / 50);
-    ellipse(eyeDistance, -eyeLevel, d / 9, d / 6);
-    ellipse(-eyeDistance, -eyeLevel, d / 9, d / 6);
+    let eyeDistance = d / 5;
+    if(this.visibleEffort){
+      strokeWeight(d/30);
+      const l = d/20;//stroke length
+      line(eyeDistance-l, -eyeLevel, eyeDistance+l, -eyeLevel-l);
+      line(eyeDistance-l, -eyeLevel, eyeDistance+l, -eyeLevel+l);
+      line(l-eyeDistance, -eyeLevel, -eyeDistance-l, -eyeLevel-l);
+      line(l-eyeDistance, -eyeLevel, -eyeDistance-l, -eyeLevel+l);
+    }else{
+      fill(255);
+      strokeWeight(d / 50);
+      ellipse(eyeDistance, -eyeLevel, d / 9, d / 6);
+      ellipse(-eyeDistance, -eyeLevel, d / 9, d / 6);
+    }
     //mouth
+    strokeWeight(d / 50);
     const w = d / 3;
     const mouthLevel = d / 8;
     fill('pink');

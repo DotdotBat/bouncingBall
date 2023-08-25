@@ -6,6 +6,7 @@ const kickSetup = lp.createForce().afterPrevious().do(() => {
     drawStage = function () {
       background(backgroundColor);
       text("STRONGER", width / 2, height / 4);
+      drawDummy();
       blobDog.draw();
     }
   });
@@ -53,6 +54,7 @@ const kickSetup = lp.createForce().afterPrevious().do(() => {
         after: 0.1,
         bodRot: -Math.PI / 10,
         skew: -Math.PI / 12,
+        dummyFall: 0,
       },
       {
         name: "savor",
@@ -72,6 +74,7 @@ const kickSetup = lp.createForce().afterPrevious().do(() => {
         after: 0.2,
         posX: canvasSize.width / 3,
         bodRot: 0,
+        dummyFall:1,
       }
     ]
   }
@@ -86,5 +89,9 @@ const kickSetup = lp.createForce().afterPrevious().do(() => {
       blobDog.pose.heading.horizontal =
         getValueFromKeyFrames(now, "leftHeading", kick.keyFrames);
       blobDog.rot = getValueFromKeyFrames(now, "bodRot", kick.keyFrames);
+      let p =getValueFromKeyFrames(now, "dummyFall", kick.keyFrames);
+      p = lerp(0, p, p);
+      p = lerp(0, p, p);
+      dummyFallAngle = lerp(0, Math.PI/4, p);
     }
   );

@@ -1,7 +1,7 @@
 const showdown = {
   squishCoefficient: 0.75,
   fullSceneDuration() {
-    return (this.beatNum + 1) * this.oneBeat;// this ia a placeholder until I figure out the length of the 8 beats segment
+    return showdownTimeFrames.settle*1.1;//adding a bit of leeway 
   },
   catY: canvasSize.height / 2,
   catX: canvasSize.width / 2,
@@ -33,7 +33,7 @@ const showdown = {
     return num * this.oneBeat;
   },
   blobR: (canvasSize.height / 10),
-  oneBeat: 0.75,
+  oneBeat: 60/song.bpm,
   beatNum: 8,
 }
 const showdownSetup = lp.createForce().afterPrevious().do(() => { showdown.setup(); });
@@ -132,7 +132,6 @@ const showdownExpressions = lp.createForce().after(showdownSetup).for(showdown.f
     blobCat.eye.linesNumber = getValueFromKeyFrames(t, "linesNumber", showdownKeyframes);
     blobCat.eye.pupilFraction = getValueFromKeyFrames(t, "pupilFraction", showdownKeyframes);
     blobCat.eye.lookingDirection = getValueFromKeyFrames(t, "lookingDirection", showdownKeyframes);
-    //todo: add overall direction
   }
 )
 const showdownKeyframes = [
@@ -246,7 +245,7 @@ const showdownKeyframes = [
     leftEarCover: blobCat.earExpressionPresets.neutral.cover,
     rightEarLift: blobCat.earExpressionPresets.neutral.lift,
     rightEarCover: blobCat.earExpressionPresets.neutral.cover,
-    ...blobCat.eyePresets.confused,
+    ...blobCat.eyePresets.toxic,
     heartResolution:1,
   },
   {

@@ -20,8 +20,10 @@ const loopFrameWork = {
     });
   },
   isStart:true,
+
   restart() {
     this._currentLoopStart = millis() / 1000;
+    this.isStart = true;
   },
   updateStep() {
     this.step = deltaTime / 1024;

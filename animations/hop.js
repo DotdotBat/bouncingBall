@@ -8,7 +8,10 @@ const highHopSetup = lp.createForce().afterPrevious().do(
         background(backgroundColor);
         text("BETTER", width / 2, height / 4);
         blobDog.draw();
-      }
+        dotBat.draw();
+      };
+      dotBat.reset();
+      dotBat.wingsAreSpread = true;
     }
   )
   
@@ -57,5 +60,23 @@ const highHopSetup = lp.createForce().afterPrevious().do(
         blobDog.ears.angle = highEars;
       }
   
+    }
+  )
+
+  const dotBatCopilot = lp.createForce().along(highHopLoop).do(
+    ()=>{
+      const t = highHopLoop.getCompleteness();
+      const flightRadius = 1.4*blobDog.body.d/2;
+      const angle = lerp(PI - PI/6, TAU+PI/6, t);
+      const x = blobDog.pos.x + flightRadius*cos(angle);
+      const y = blobDog.pos.y - flightRadius*sin(angle);
+      dotBat.setPos(x, y);
+
+      dotBat.rotation = lerp(0, PI, t);
+
+
+      //todo: if at peak - spread wings
+      dotBat.wingsAreSpread = 
+        (t>0.1&&t<0.2) || (t>0.8);
     }
   )

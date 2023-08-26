@@ -21,6 +21,7 @@ const song = {
   group: "Daft punk",
   remixBy: "mr. Pandemy",
   bpm: 144,
+  get bps(){return this.bpm/60;},
   length: 57 //I want to use only the first 57 seconds
 }
 
@@ -31,9 +32,8 @@ function setup() {
   createCanvas(cs.width, cs.height);
   //if(!capturingOn)frameRate(FPS);//breaks capturing, so if capturing, don't set framerate
   textSize(height/12);
-  dummyImage = loadImage("assets/dummy.jpg");
+  loadImages();
 }
-let dummyImage;
 let animationStartInMillis;
 
 let backgroundColor;
@@ -43,15 +43,15 @@ function draw() {
     if(capturingOn)initiateCapturer();
     animationStartInMillis = millis();
   }
-
+  
   loopFrameWork.update();
-
+  
   drawStage();
   
   if(capturingOn&&checkIfAnimationIsComplete())endCapture();
   
   if(capturingOn)captureDrawnCanvas();
-
+  
 }
 
 function drawStage(){
@@ -61,7 +61,7 @@ function drawStage(){
 
 
 function initiateCapturer(){
-   capturer.start();
+  capturer.start();
 }
 
 function captureDrawnCanvas(){
@@ -71,7 +71,7 @@ function captureDrawnCanvas(){
 function checkIfAnimationIsComplete(){
   const firstFrame = frameCount==1;
   if(firstFrame) return false;
-
+  
   const theLoopJustRestarted = loopFrameWork.isStart;
   return theLoopJustRestarted;
   //todo:
@@ -81,6 +81,12 @@ function endCapture(){
   noLoop();
   capturer.stop();
   capturer.save();
-  console.log("finished capturing");
+  console.log("finished capturing, animation stopped");
 }
 
+
+let dummyImage;
+function loadImages(){
+  dummyImage = loadImage("assets/dummy.jpg");
+  loadDotBatImages();
+}

@@ -40,6 +40,7 @@ const barbell = {
       push();
       translate(rightEndX, this.endsY);
       rotate(weightsAngle);
+      dotBat.drawStandingAt(0, -this.holdSpacing/6);
       ellipse(0,0,this.holdSpacing/5,this.holdSpacing/2);
       pop();
     },

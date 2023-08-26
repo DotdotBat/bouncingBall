@@ -1,5 +1,5 @@
 const bounce = {
-    duration: 1,
+    duration: 3*1/song.bps,
     slowdownOnContact: 1,// > 1
     restDuration: 0,
     startPoint: { x: 2 * canvasSize.width / 3, y: canvasSize.height / 3 },
@@ -22,15 +22,29 @@ const bounce = {
       blobDog.speed.y = this.startSpeed.y;
       drawStage = bounce.draw;
       this.blobDogFullySquishedR = this.RBlobDog * this.blobDogSquishedRCoefficient;
+      dotBat.reset();
+      dotBat.wingsAreSpread = false;
+      dotBat.rotation = PI/12;
     },
     draw() {
       background(backgroundColor);
       text("FASTER", width / 2, height / 4);
+      dotBat.draw();
       blobDog.draw();
     },
     moveDog() {
       blobDog.pos.x = blobDog.pos.x + blobDog.speed.x * lp.step;
       blobDog.pos.y = blobDog.pos.y + blobDog.speed.y * lp.step;
+
+      //and dotBat is just sitting on the head
+      dotBat.x = blobDog.pos.x; dotBat.y = blobDog.pos.y;
+      const d = blobDog.body.d;
+      dotBat.x += d*0.2;
+      let jolt = blobDog._squeeze;
+      if(isNaN(blobDog._squeeze))jolt = 1;
+      const blobDogIsSqueezingAgainstWall = blobDog.squeezeRot > PI-0.1;
+      if(blobDogIsSqueezingAgainstWall)jolt= 1/jolt;
+      dotBat.y -= d*0.4*jolt*jolt;
     },
     restingUntil: null,
     update() {

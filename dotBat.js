@@ -7,6 +7,7 @@ function loadDotBatImages() {
 }
 
 const dotBat = {
+    inPants: true,
     bodyBaseLayer: null,
     wingsLayer: null,
     pantsLayer: null,
@@ -29,7 +30,7 @@ const dotBat = {
         image(this.eyeLayer, 0, 0);
         if (this.wingsAreSpread) image(this.wingsLayer, 0, 0);
         image(this.mouthLayer, 0, 0);
-        image(this.pantsLayer, 0, 0);
+        if (dotBat.inPants) image(this.pantsLayer, 0, 0);
         pop();
     },
     x: 0,
@@ -43,10 +44,10 @@ const dotBat = {
     },
     wingsAreSpread: true,
     rotation: 0,
-    reset(){
+    reset() {
         this.wingsAreSpread = true;
         this.rotation = 0;
-        this.x = width/2;
+        this.x = width / 2;
         this.y = 0;
     },
 }

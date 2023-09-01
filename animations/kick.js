@@ -3,9 +3,13 @@ const kickSetup = lp.createForce().afterPrevious().do(() => {
     blobDog.reset();
     textAlign(CENTER, CENTER);
     textSize(40);
+    dotBat.reset();
+    dotBat.wingsAreSpread = false;
+    dotBat.setPos(width*0.6, height*0.57);
     drawStage = function () {
       background(backgroundColor);
       text("STRONGER", width / 2, height / 4);
+      dotBat.draw();
       drawDummy();
       blobDog.draw();
     }

@@ -1,11 +1,12 @@
 
-const weightliftingSetup = lp.createForce().afterPrevious().do(() => {
+const weightliftingSetup = lp.createForce().afterLast().do(() => {
     backgroundColor = color("midnightBlue");
     blobDog.reset();
     blobDog.pos.x = canvasSize.width / 2;
     barbell.centerX = blobDog.pos.x;
     blobDog.body.d = canvasSize.height / 3;
     barbell.setSize(blobDog.body.d * 2);
+    textAlign(CENTER, CENTER);
     drawStage = function () {
       background(backgroundColor);
       text("HARDER", width / 2, height / 4);

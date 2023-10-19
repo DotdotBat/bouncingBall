@@ -1,4 +1,4 @@
-const kickSetup = lp.createForce().afterPrevious().do(() => {
+const kickSetup = lp.createForce().afterLast().do(() => {
     backgroundColor = color('maroon');
     blobDog.reset();
     textAlign(CENTER, CENTER);

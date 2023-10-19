@@ -36,7 +36,7 @@ function setup() {
 }
 let animationStartInMillis;
 
-let backgroundColor;
+let backgroundColor = 0;
 function draw() {
   const firstFrame = frameCount ==1;
   if(firstFrame){

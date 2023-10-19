@@ -36,7 +36,7 @@ const showdown = {
   oneBeat: 60/song.bpm,
   beatNum: 8,
 }
-const showdownSetup = lp.createForce().afterPrevious().do(() => { showdown.setup(); });
+const showdownSetup = lp.createForce().afterLast().do(() => { showdown.setup(); });
 
 const showdownTimeFrames = {
   start: 0,

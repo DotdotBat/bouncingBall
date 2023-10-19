@@ -1,9 +1,10 @@
-const highHopSetup = lp.createForce().afterPrevious().do(
+const highHopSetup = lp.createForce().afterLast().do(
     () => {
       backgroundColor = color("indigo");
       blobDog.reset();
       blobDog.pos = createVector(0.2 * width, 1.1 * height);
       blobDog.body.d = canvasSize.height / 3;
+      textAlign(CENTER, CENTER);
       drawStage = function () {
         background(backgroundColor);
         text("BETTER", width / 2, height / 4);

@@ -25,6 +25,7 @@ const bounce = {
       dotBat.reset();
       dotBat.wingsAreSpread = false;
       dotBat.rotation = PI/12;
+      textAlign(CENTER, CENTER);
     },
     draw() {
       background(backgroundColor);
@@ -152,7 +153,7 @@ const bounce = {
     return airborneSpeed;
   }
   
-  const bounceSetup = lp.createForce().afterPrevious().do(() => { bounce.setup(); });
+  const bounceSetup = lp.createForce().afterLast().do(() => { bounce.setup(); });
   
   const bounceLoop = lp.createForce().after(bounceSetup).for(bounce.duration).do(() => { bounce.update(); });
   

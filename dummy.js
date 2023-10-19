@@ -5,7 +5,6 @@ let dummyFallAngle = 0;
 
 function drawDummy(){
     //anchor point
-    
     const x = width*0.75;
     const y= 2*height/3;
     const leeway = 0.2;

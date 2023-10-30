@@ -7,6 +7,7 @@ const loopFrameWork = {
     this._DURATION = sec;
     this._durationWasSetManually = true;
   },
+  /** updates inner variables and applies all due forces */
   update() {
     this.updateStep();
     this.updateSecondsAndStart();

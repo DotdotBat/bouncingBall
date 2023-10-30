@@ -4,29 +4,29 @@ lp.setDuration(10);//I will most likely test something small, or even without du
 
 const testSetup = lp.createForce().at(0).do(
     () => {
-        blobDog.reset();
-        blobDog.pos.x = canvasSize.width / 4;
-        blobDog.visibleEffort = true;
+        backgroundColor = color("midnightBlue");
         drawStage = () => {
-            background(200,0,0);
-            blobDog.draw();
-        }
-    }
-);
-const testUpdate = lp.createForce().after(testSetup, 5).do(
-    ()=>{
-        blobDog.visibleEffort = false;
+            drawPicPresentingPlans();
+            noLoop();
+        };
     }
 );
 
+const beatDuration = 1 / song.bps;
+const testUpdate = lp.createForce().after(testSetup, 3).for(4 * beatDuration).do(
+    () => {
+
+    }
+);
 
 
 
 
-/** no matter how many times this function will be called, it will print it's arguments only once*/
-function printOnce(...thingsToSay) {
+function printOnlyOnce(...thingsToSay) {
     if (alreadySaidOnce) return;
     alreadySaidOnce = true;
     print(...thingsToSay);
 }
 let alreadySaidOnce = false;
+
+

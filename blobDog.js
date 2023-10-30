@@ -13,13 +13,17 @@ const blobDog = {
   },
   pose: {
     heading: {
-      horizontal: -0.25, //1 is right and -1 is left
-      vertical: -0.1//1 is up, and -1 is down
+      /**1 is right and -1 is left*/
+      horizontal: -0.25, 
+      /**1 is up, and -1 is down */
+      vertical: -0.1
     },
     looking: {
-      horizontal: -0.25, //1 is right and -1 is left
-      vertical: 0.1//1 is up, and -1 is down
-    }
+      /**1 is right and -1 is left*/
+      horizontal: -0.25, 
+      /**1 is up, and -1 is down */
+      vertical: 0.1
+    },
   },
   pos: { x: 250, y: 250 },
   prePos: { x: NaN, y: NaN },
@@ -183,7 +187,7 @@ const blobDog = {
     this.drawBody();
     translate(this.pose.heading.horizontal * this.body.d / 2, 0);
     this.drawFace();
-    //this.drawDirectionalMock();
+    // this.drawDirectionalMock();
     pop();
   },
   takeHoldRight(x, y) {

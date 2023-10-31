@@ -1,7 +1,7 @@
-
+var illustrationBackgroundColor = 51; //a dark gray. 
 
 function drawPicPlanningPlans() {
-    background(51);
+    background(illustrationBackgroundColor);
     const pDrawingsCenter = { x: 0.75 * width, y: 0.75 * height };//about
 
     //blobDog looking at drawing
@@ -119,7 +119,7 @@ function drawPencil(tipX, tipY, shaftAngle, length, girth, alpha = 255) {
 }
 
 function drawPicPresentingPlans() {
-    background(51);
+    background(illustrationBackgroundColor);
     //4 drawings are spread in an arc
     push();
     translate(width / 2, height / 2);

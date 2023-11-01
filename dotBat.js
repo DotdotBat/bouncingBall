@@ -19,6 +19,9 @@ const dotBat = {
     get width() {
         return this.bodyBaseLayer.width;
     },
+    get faceY(){
+        return this.y - this.height*0.7;
+    },
     drawStandingAt(x, y) {
         push();
         translate(x, y);

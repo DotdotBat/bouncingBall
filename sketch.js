@@ -1,4 +1,4 @@
-const capturingOn = false;
+let capturingOn = false;
 const FPS = 60;
 if (capturingOn) {
   var capturer = new CCapture({
@@ -27,7 +27,7 @@ function setup() {
   createCanvas(cs.width, cs.height);
   if (!capturingOn) frameRate(FPS);//breaks capturing, so if capturing, don't set framerate
   textSize(height / 12);
-  loadImages();
+  loadAssets();
 }
 let animationStartInMillis;
 
@@ -81,7 +81,8 @@ function endCapture() {
 
 
 let dummyImage;
-function loadImages() {
+let consoleCodeVideo;
+function loadAssets() {
   dummyImage = loadImage("assets/dummy.jpg");
   loadDotBatImages();
 }

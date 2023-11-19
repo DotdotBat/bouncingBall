@@ -26,9 +26,7 @@ const highHopSetup = lp.createForce().afterLast().do(
   
   
   const highHopLoop = lp.createForce().after(highHopSetup).for(3).do(
-    () => {
-      blobDog.savePrePos();//will be used later to calculate speed
-  
+    () => {  
       const sT = highHopLoop._start;//start time
       const progress = 2 * ((lp.seconds - sT) % hopSettings.duration) / hopSettings.duration - 1;
       //so, progress starts at -1, becomes 0 at the middle and ends at 1
@@ -37,15 +35,14 @@ const highHopSetup = lp.createForce().afterLast().do(
       blobDog.pos.y = s.highPoint + (s.lowPoint - s.highPoint) * parabolaInterpolation;
   
       blobDog.pos.x = lerp(s.startX, s.endX, 0.5 + progress / 2);//0 to 1
-      //blobDog
+      //derivative of x^2 is x*2
       blobDog.speed.x = (s.endX - s.startX) / s.duration;
       blobDog.speed.y = (s.lowPoint - s.highPoint) * progress * 2;
-      //derivative of x^2 is x*2
-  
+      // No, its not cheating! It's MATH.
       blobDog.squeezeRot = blobDog.speed.heading();
       blobDog._squeeze = 1;
       if (abs(progress) > 0.3) {
-        blobDog._squeeze = 1 + 0.1 * (abs(progress) - 0.3);
+        blobDog._squeeze = 1 + 0.25 * (abs(progress) - 0.3);
       }
   
       blobDog.rot = -progress * Math.PI / 24;
@@ -75,8 +72,7 @@ const highHopSetup = lp.createForce().afterLast().do(
 
       dotBat.rotation = lerp(0, PI, t);
 
-
-      //todo: if at peak - spread wings
+      //spread wings only during the climb and fall, so in the middle there is free falling of sorts.
       dotBat.wingsAreSpread = 
         (t>0.1&&t<0.2) || (t>0.8);
     }

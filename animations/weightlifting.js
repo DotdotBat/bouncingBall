@@ -29,7 +29,7 @@ const weightliftingSetup = lp.createForce().afterLast().do(() => {
     barbellEndsFollowupTime: 1,
     blobDogStandsOnPoint: { x: canvasSize.width / 2, y: 2 * canvasSize.height / 3 },
   }
-  const weightLiftingLoop = lp.createForce().after(weightliftingSetup).for(2*song.bps).do(
+  const weightLiftingLoop = lp.createForce().after(weightliftingSetup).for(10/song.bps).do(
     () => {
       const wlLoop = weightLiftingLoop;
       const wl = weightliftingSettings;

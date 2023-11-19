@@ -1,11 +1,12 @@
 let capturingOn = false;
-const FPS = 60;
+const FPS = 30;
 if (capturingOn) {
   var capturer = new CCapture({
     framerate: FPS,
     timeLimit: 60,
-    format: "webm",
+    format: "gif",//you have to define the gif worker
     verbose: true,
+    workersPath: "./libraries/"
   });
 }
 

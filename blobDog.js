@@ -10,6 +10,8 @@ const blobDog = {
     this.pose.heading.horizontal = 0;
     this.body.d = height / 3;
     this.visibleEffort = false;
+    this.body.mainClr = color('beige');
+    this.body.patternClr = color('lightSalmon');
   },
   pose: {
     heading: {

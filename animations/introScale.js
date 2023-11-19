@@ -35,7 +35,6 @@ const shotSetup = lp.createForce().afterLast().do(
             translate(width/2, height/2);
             scale(cameraScale);
             // translate(dotBat.x, dotBat.faceY);
-            draw
             background(illustrationBackgroundColor);
             blobDog.draw();
             dotBat.draw();

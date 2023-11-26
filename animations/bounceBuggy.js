@@ -1,11 +1,15 @@
-const bounce = {
-    duration: 3*1/song.bps,
+// the actual bugs I have encountered while developing the bounce animation are not visual, mostly it was blobDog just standing there or refusing to be rendered at all. 
+// so I am taking creative liberty and just making up the bug.
+
+
+const buggyBounce = {
+    duration: 6,
     slowdownOnContact: 1.5,// > 1
     restDuration: 0,
     startPoint: { x: 2 * canvasSize.width / 3, y: canvasSize.height / 3 },
-    endPoint: { x: canvasSize.width / 3, y: 2 * canvasSize.height / 3 },
+    endPoint: { x: 0, y: 5* canvasSize.height / 3 },
     wallX: canvasSize.width,
-    floorY: canvasSize.height,
+    floorY: 1.5*canvasSize.height,
     RBlobDog: canvasSize.height / 8,
     blobDogSquishedRCoefficient: 0.7,
     blobDogFullySquishedR: undefined,
@@ -17,10 +21,10 @@ const bounce = {
       blobDog.body.d = 2 * this.RBlobDog;
       blobDog.pos.x = this.startPoint.x;
       blobDog.pos.y = this.startPoint.y;
-      this.startSpeed = precalculateAirborneSpeedForBounce();
+      this.startSpeed = precalculateAirborneSpeedForBuggyBounce();
       blobDog.speed.x = this.startSpeed.x;
       blobDog.speed.y = this.startSpeed.y;
-      drawStage = bounce.draw;
+      drawStage = buggyBounce.draw;
       this.blobDogFullySquishedR = this.RBlobDog * this.blobDogSquishedRCoefficient;
       dotBat.reset();
       dotBat.wingsAreSpread = false;
@@ -29,7 +33,7 @@ const bounce = {
     },
     draw() {
       background(backgroundColor);
-      text("FASTER", width / 2, height / 4);
+      //text("FASTER", width / 2, height / 4);
       dotBat.draw();
       blobDog.draw();
     },
@@ -53,8 +57,8 @@ const bounce = {
       const isTouchingFloor = blobDog.pos.y + this.RBlobDog > this.floorY;
   
       if (this.isAirborne) {
-        const startingBounce = isTouchingWall || isTouchingFloor
-        if (startingBounce) {
+        const startingBuggyBounce = isTouchingWall || isTouchingFloor
+        if (startingBuggyBounce) {
           this.isAirborne = false;
   
           blobDog.speed.x = blobDog.speed.x / this.slowdownOnContact;
@@ -68,8 +72,8 @@ const bounce = {
         }
       }
   
-      const isMidBounce = !this.isAirborne;
-      if (isMidBounce) {
+      const isMidBuggyBounce = !this.isAirborne;
+      if (isMidBuggyBounce) {
         const isResting = this.restingUntil !== null;
         const isFullySquishedToTheWall = blobDog.pos.x + this.blobDogFullySquishedR > this.wallX;
         const isFullySquishedToTheFloor = blobDog.pos.y + this.blobDogFullySquishedR > this.floorY;
@@ -113,33 +117,33 @@ const bounce = {
   
   
   /** |     start  |the preview is broken. Better right-click the function and go to definition
-   *  |         \  |the path of the bounces is depicted.
+   *  |         \  |the path of the buggyBounces is depicted.
    *  |          \ |this is a primitive physics simulation.
    *  |           \|
    *  |    end    /|It returns an object with x and y values. Both are positive.
    *  |       \  / |
    *  |        \/  |
    */
-  function precalculateAirborneSpeedForBounce() {
-    const time = bounce.duration;//the whole time getting from start to end will take
-    const restTime = bounce.restDuration; //in the middle of the bounce
-    const bounceNum = 2; //how many bounces happen
-    const startX = bounce.startPoint.x;
-    const startY = bounce.startPoint.y;
-    const endX = bounce.endPoint.x;
-    const endY = bounce.endPoint.y;
-    const wallX = bounce.wallX;
-    const floorY = bounce.floorY;
-    const slowdown = bounce.slowdownOnContact; // > 1
+  function precalculateAirborneSpeedForBuggyBounce() {
+    const time = buggyBounce.duration;//the whole time getting from start to end will take
+    const restTime = buggyBounce.restDuration; //in the middle of the buggyBounce
+    const buggyBounceNum = 2; //how many buggyBounces happen
+    const startX = buggyBounce.startPoint.x;
+    const startY = buggyBounce.startPoint.y;
+    const endX = buggyBounce.endPoint.x;
+    const endY = buggyBounce.endPoint.y;
+    const wallX = buggyBounce.wallX;
+    const floorY = buggyBounce.floorY;
+    const slowdown = buggyBounce.slowdownOnContact; // > 1
   
   
-    const movingTime = time - restTime * bounceNum;
-    const blobDogSquishedR = bounce.RBlobDog * bounce.blobDogSquishedRCoefficient;
+    const movingTime = time - restTime * buggyBounceNum;
+    const blobDogSquishedR = buggyBounce.RBlobDog * buggyBounce.blobDogSquishedRCoefficient;
     const padding = blobDogSquishedR;
     const distanceX = (wallX - startX) - padding + (wallX - endX) - padding;
     const distanceY = (floorY - startY) - padding + (floorY - endY) - padding;
     //the number 2 is here because we account for touchdown as well as takeoff
-    const slowDistance = bounceNum * (bounce.RBlobDog - blobDogSquishedR) * 2;
+    const slowDistance = buggyBounceNum * (buggyBounce.RBlobDog - blobDogSquishedR) * 2;
     //let's pretend that the whole distance will be crossed at the airborne speed,
     //but the time is unchanged, so the distance stretches.
     const normalizedDistance = {
@@ -153,7 +157,7 @@ const bounce = {
     return airborneSpeed;
   }
   
-  const bounceSetup = lp.createForce().afterLast().do(() => { bounce.setup(); });
+  const buggyBounceSetup = lp.createForce().afterLast().do(() => { buggyBounce.setup(); });
   
-  const bounceLoop = lp.createForce().after(bounceSetup).for(bounce.duration).do(() => { bounce.update(); });
+  const buggyBounceLoop = lp.createForce().after(buggyBounceSetup).for(buggyBounce.duration).do(() => { buggyBounce.update(); });
   

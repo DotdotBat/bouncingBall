@@ -1,5 +1,5 @@
-let capturingOn = false;
-const FPS = 30;
+let capturingOn = true;
+const FPS = 25;
 if (capturingOn) {
   var capturer = new CCapture({
     framerate: FPS,

@@ -34,4 +34,5 @@ const screensaverBounceLoop = lp.createForce().after(screensaverBounceSetup).for
 function randomColor(){
     return color(random(255),random(255),random(255));
 }
-//Yea, blobDog can get stuck in a wall with such logic, but with a fixed FPS it is unlikely. 
+//Yea, blobDog can get stuck in a wall with such logic, but with a fixed FPS it is unlikely.
+//If it will be a real problem, I will change it, no premature problem-solving 

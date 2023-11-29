@@ -34,10 +34,6 @@ function drawPicPlanningPlans() {
     drawPencil(pDrawingsCenter.x - 25, pDrawingsCenter.y, PI / 6, 100, 15, 100);
     drawPencil(pDrawingsCenter.x + 25, pDrawingsCenter.y, -PI / 6, 100, 15, 50);
     drawPencil(pDrawingsCenter.x - 10, pDrawingsCenter.y + 5, PI / 18, 100, 15);
-
-    // circle(pDrawingsCenter.x, pDrawingsCenter.y, 10);
-    //afterimage of the same pencil
-    //motion lines?
 }
 
 function oneDrawingPaper(x, y, rotation, drawingNumber = 0) {
@@ -71,9 +67,12 @@ function oneDrawingPaper(x, y, rotation, drawingNumber = 0) {
     if(drawingNumber==4){//move to her.
         circle(-20,0,20);
         circle(20, 0, 20);
-        line(-20, -30, 20, -30);
-        line(20, -30, 15, -25);
-        line(20, -30, 15, -35);
+        line(-20, -30, 10, -20);
+        line(10, -20, 20, -30);
+        translate(20, -30);
+        rotate(-PI*0.25);
+        line(-5, -5, 0, -0);
+        line(-5, 5, 0, -0);
     }
     pop();
 }

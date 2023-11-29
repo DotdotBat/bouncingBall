@@ -1,14 +1,5 @@
-let capturingOn = true;
+let capturingOn = false;
 const FPS = 25;
-if (capturingOn) {
-  var capturer = new CCapture({
-    framerate: FPS,
-    timeLimit: 60,
-    format: "gif",//you have to define the gif worker
-    verbose: true,
-    workersPath: "./libraries/"
-  });
-}
 
 const canvasSize = { width: 480, height: 480 };
 
@@ -57,6 +48,14 @@ function drawStage() {
 
 
 function initiateCapturer() {
+
+  var capturer = new CCapture({
+    framerate: FPS,
+    timeLimit: 60,
+    format: "gif",//you have to define the gif worker
+    verbose: true,
+    workersPath: "./libraries/"
+  });
   capturer.start();
 }
 
@@ -87,3 +86,6 @@ function loadAssets() {
   dummyImage = loadImage("assets/dummy.jpg");
   loadDotBatImages();
 }
+
+
+

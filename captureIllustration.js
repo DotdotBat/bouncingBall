@@ -1,17 +1,14 @@
-//to think that I have actually forgotten about the "save()" function
-//well, I will just leave it here. 
+//Yea, I forgot that the "save()" method exists. Sue me. 
 
-function captureIllustration(drawIllustrationCallback){
-    drawIllustrationCallback();
-    const illustrationCapturer = new CCapture({
-        timeLimit: 60,
-        format: "png",//you have to define the gif worker
-        verbose: true,
-      });
-    illustrationCapturer.start();
-    illustrationCapturer.capture();
-    illustrationCapturer.save();
-    illustrationCapturer.stop();;
-
+function captureIllustration(drawIllustrationCallback) {
+  drawIllustrationCallback();
+  const illustrationCapturer = new CCapture({
+    format: "png",
+    verbose: true,
+  });
+  illustrationCapturer.start();
+  illustrationCapturer.capture();
+  illustrationCapturer.save();
+  illustrationCapturer.stop();
 }
 

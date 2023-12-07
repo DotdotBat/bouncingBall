@@ -22,8 +22,12 @@ const kickSetup = lp.createForce().afterLast().do(() => {
     //smooch (lift your face)
     keyFrames: [
       {
-        name: "start Pos",
+        name: "before start, lets wait a bit",
         at: 0,
+      },
+      {
+        name: "start Pos",
+        at: 0.5,
         posX: canvasSize.width / 3,
         posY: canvasSize.height / 2,
         bodRot: 0,
@@ -79,6 +83,10 @@ const kickSetup = lp.createForce().afterLast().do(() => {
         posX: canvasSize.width / 3,
         bodRot: 0,
         dummyFall:1,
+      },
+      {
+        name: "return",
+        after: 1,
       }
     ]
   }

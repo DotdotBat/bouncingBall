@@ -50,14 +50,14 @@ const keyframeIllustration = {
 
 let currentX = 1;
 let currentY = 1;
-lp.clearForces();
-lp.setDuration(keyframeIllustrationDuration);
-lp.createForce().afterLast().do(() => {
+const keyframeIllustrationSetup = lp.createForce().afterLast().do(() => {
     blobDog.reset();
     blobDog.setSize(width/6);
     drawStage = () => {
-        currentX = getValueFromKeyFrames(lp.seconds, "X", keyframeIllustration.keyFrames);
-        currentY = getValueFromKeyFrames(lp.seconds, "Y", keyframeIllustration.keyFrames);
-        drawPicKeyframeIllustration(lp.seconds);
+        const t = keyframeIllustrationSetup.getTimeFromStart()
+        currentX = getValueFromKeyFrames(t, "X", keyframeIllustration.keyFrames);
+        currentY = getValueFromKeyFrames(t, "Y", keyframeIllustration.keyFrames);
+        drawPicKeyframeIllustration(t);
     }
 });
+lp.createForce().afterLast().for(keyframeIllustrationDuration).do(()=>{});//it is here just to set the duration of the animation

@@ -67,14 +67,14 @@ const jumpKeyframeIllustration = {
 
 let currentJumpX = 1;
 let currentJumpY = 1;
-lp.clearForces();
-lp.setDuration(jumpKeyframeIllustrationDuration);
-lp.createForce().afterLast().do(() => {
+const jumpKeyframeIllustrationSetup = lp.createForce().afterLast().do(() => {
     blobDog.reset();
     blobDog.setSize(width/6);
     drawStage = () => {
-        currentJumpX = getValueFromKeyFrames(lp.seconds, "X", jumpKeyframeIllustration.keyFrames);
-        currentJumpY = getValueFromKeyFrames(lp.seconds, "Y", jumpKeyframeIllustration.keyFrames);
-        drawPicJumpKeyframeIllustration(lp.seconds);
+        const t = jumpKeyframeIllustrationSetup.getTimeFromStart();
+        currentJumpX = getValueFromKeyFrames(t, "X", jumpKeyframeIllustration.keyFrames);
+        currentJumpY = getValueFromKeyFrames(t, "Y", jumpKeyframeIllustration.keyFrames);
+        drawPicJumpKeyframeIllustration(t);
     }
 });
+lp.createForce().afterLast().for(jumpKeyframeIllustrationDuration).do(()=>{});//it is here just to set the duration of the animation

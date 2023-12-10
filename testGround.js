@@ -5,7 +5,8 @@ lp.setDuration(10);//I will most likely test something small, or even without du
 
 const testSetup = lp.createForce().at(0.3).do(
     () => {
-        drawPicKeyframeIllustration();
+        drawPicPresentingPlans();
+        //save();
         noLoop();
     }
 );

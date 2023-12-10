@@ -41,8 +41,8 @@ const jumpKeyframeIllustration = {
             after: 1.5,
             Y: topHeight,
             curve: (start, end, amt)=>{// parameter order is taken from the lerp function
-                let p = 1-(1-amt)*(1-amt);//results in a parabolic slow out
-                return lerp(start, end, p);
+                const p = lerp(start, end, amt);
+                return lerp(p, end, amt);
             }
         },
         {
@@ -53,7 +53,7 @@ const jumpKeyframeIllustration = {
             after:0,
             Y: floorHeight,
             curve: (start, end, amt)=>{//just remember that the amount goes from 0 to 1.
-                let p = amt*amt;//results in a parabolic slow in
+                let p = amt*amt;//that is the same as using lerp twice, I just wanted to check if it works. 
                 return lerp(start, end, p);
             }
         },
